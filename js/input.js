@@ -1,5 +1,4 @@
 // --------------------------------------------------
-// TODO: Implement this...
 // Hard drop (very different to soft drop!)
 //  -> instantly moves piece as far down as possible
 //  -> ignores "gravity" timing
