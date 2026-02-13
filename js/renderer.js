@@ -3,7 +3,6 @@ import { board } from './board.js';
 import { piece } from './piece.js';
 
 const GRID_BACKGROUND_COLOUR = '#3F3F3F';
-const LOCKED_CELL_COLOUR = '#6F6F6F';
 
 // Get canvas element/context
 const canvas = document.getElementById('canvas');
@@ -41,7 +40,7 @@ export function render() {
   for (let y = 0; y < ROWS; y++) {
     for (let x = 0; x < COLS; x++) {
       if (board[y][x]) {
-        drawCell(x, y, LOCKED_CELL_COLOUR);
+        drawCell(x, y, board[y][x]);
       }
     }
   }

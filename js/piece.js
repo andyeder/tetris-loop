@@ -58,8 +58,7 @@ export function lockPiece() {
   for (let y = 0; y < piece.shape.length; y++) {
     for (let x = 0; x < piece.shape[y].length; x++) {
       if (piece.shape[y][x]) {
-        // TODO: Store colour info in the board (will need board structure update)
-        board[piece.y + y][piece.x + x] = 1;
+        board[piece.y + y][piece.x + x] = piece.colour;
       }
     }
   }
