@@ -30,7 +30,7 @@ Nothing special - just the following:
 
 ## Controls
 
-| Action     | Key         |
+| **Action** | **Key**     |
 | :--------- | :---------- |
 | Left       | Arrow Left  |
 | Right      | Arrow Right |
