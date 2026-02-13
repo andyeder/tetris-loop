@@ -16,6 +16,19 @@ import { TETROMINOES } from './constants.js';
 //   - Player always gets all 7 pieces within 7 spawns
 //   - No extreme droughts
 //   - Improved play feel without being unfair
+//
+// The algorithm uses a Fisher-Yates shuffle
+// How does it work?
+//
+// [Backwards through the array, last index down to zero]
+// For each position i:
+//  1. Pick random index j from 0 to i
+//  2. Swap element i with element j
+//
+// By stepping backwards, everything AFTER i is
+//  already locked in place
+//
+// More info: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
 // --------------------------------------------------
 let sevenBag = [];
 
