@@ -10,7 +10,7 @@
 
 // Simple object to track input state
 export const inputState = {
-  // TODO: hardDropRequested: false,
+  hardDropRequested: false,
   down: false,
 };
 
@@ -27,7 +27,7 @@ export function initInput() {
     if (e.key === 'ArrowRight') moveState.right.held = true;
     if (e.key === 'ArrowDown') inputState.down = true;
 
-    // TODO: if (e.code === 'Space') inputState.hardDropRequested = true;
+    if (e.code === 'Space') inputState.hardDropRequested = true;
   });
 
   window.addEventListener('keyup', (e) => {

@@ -11,7 +11,26 @@ export function initGame() {
   spawnPiece();
 }
 
+// Execute the hard drop
+function hardDrop() {
+  while (!collides(piece.x, piece.y + 1)) {
+    piece.y++;
+  }
+
+  lockPiece();
+
+  // Reset timers so the next piece starts clean
+  dropTimer = 0;
+}
+
 export function updateGame(dt) {
+  // Important - hard drop takes priority!
+  if (inputState.hardDropRequested) {
+    hardDrop();
+    inputState.hardDropRequested = false;
+    return; // no more processing this tick, start clean on next tick
+  }
+
   // TODO: implement DAS + ARR for Tetris style movement
   const movingLeft = moveState.left.held;
   const movingRight = moveState.right.held;
