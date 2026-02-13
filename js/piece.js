@@ -1,5 +1,6 @@
+import { getNextTetromino } from './utils.js';
 import { board } from './board.js';
-import { COLS, ROWS, TETROMINOES } from './constants.js';
+import { COLS, ROWS } from './constants.js';
 
 // --------------------------------------------------
 // Current (active) piece / Tetromino
@@ -24,7 +25,7 @@ function cloneTetrominoShape(shape) {
 // Spawn a 'random' Tetromino piece (not random yet!)
 // --------------------------------------------------
 export function spawnPiece() {
-  const tetromino = TETROMINOES[Math.floor(Math.random() * TETROMINOES.length)];
+  const tetromino = getNextTetromino();
   piece.shape = cloneTetrominoShape(tetromino.shape);
   piece.colour = tetromino.colour;
   piece.x = 3;

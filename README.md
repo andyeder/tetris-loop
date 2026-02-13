@@ -17,12 +17,12 @@ Nothing special - just the following:
 - Based on "modern" Tetris conventions - colours, timings, etc.
 - Supports left/right movement (basic)
 - Support for "soft-drop" and "hard-drop"
+- Spawns pieces using "7-bag" randomisation (refill + shuffle)
 
 ## TODO List
 
 - Add Tetromino/piece rotation
 - Add logic to clear completed lines and update board
-- Add 7-bag (refill + shuffle) randomisation (spawn)
 - Add DAS + ARR movement
 - Add "wall kick" tables
 - Add scoring and level progression
