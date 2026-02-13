@@ -2,7 +2,7 @@
 
 I'm not sure why I called it "tetris-loop", but it is what it is! This is my interpretation of the fundamental elements that go into writing a Tetris-like game. Game loop, movement, etc.
 
-#### Tech Stack
+### Tech Stack
 
 Nothing special - just the following:
 
@@ -10,14 +10,14 @@ Nothing special - just the following:
 - CSS (basic styling)
 - Javascript (module)
 
-#### Features (kinda sorta)
+### Features (kinda sorta)
 
 - Fixed step updates
 - Render decoupled from game logic
 - Based on "modern" Tetris conventions - colours, timings, etc.
 - Supports left/right movement (basic) + "soft-drop" at the moment
 
-#### TODO List
+### TODO List
 
 - Add "hard-drop" support
 - Add Tetromino/piece rotation
