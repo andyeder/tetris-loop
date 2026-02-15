@@ -139,7 +139,7 @@ export {
   FIXED_DT,
   DROP_INTERVAL,
   MOVE_INTERVAL,
-  // LOCK_DELAY,
+  LOCK_DELAY,
   // DAS,
   // ARR,
   TETROMINOES,

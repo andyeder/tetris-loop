@@ -18,6 +18,7 @@ Nothing special - just the following:
 - Supports left/right movement (basic)
 - Support for "soft-drop" and "hard-drop"
 - Spawns pieces using "7-bag" randomisation (refill + shuffle)
+- Added lock-delay - the period between a piece grounding and being locked-in (during which a player can still move left/right)
 
 ## TODO List
 

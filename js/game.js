@@ -1,9 +1,10 @@
-import { DROP_INTERVAL, MOVE_INTERVAL } from './constants.js';
+import { DROP_INTERVAL, MOVE_INTERVAL, LOCK_DELAY } from './constants.js';
 import { piece, collides, lockPiece, spawnPiece } from './piece.js';
 import { moveState, inputState, initInput } from './input.js';
 
 let dropTimer = 0;
 let wasSoftDropping = false; // to track whether or not user was "soft-dropping"
+let lockTimer = 0; // for lock-in (lock delay) timing
 let moveTimer = 0; // will be replaced when DAS + ARR implemented
 
 export function initGame() {
@@ -21,6 +22,7 @@ function hardDrop() {
 
   // Reset timers so the next piece starts clean
   dropTimer = 0;
+  lockTimer = 0;
 }
 
 export function updateGame(dt) {
@@ -39,11 +41,13 @@ export function updateGame(dt) {
   if (movingLeft && !moveState.left.wasHeld) {
     if (!collides(piece.x - 1, piece.y)) {
       piece.x--;
+      lockTimer = 0;
     }
     moveTimer = 0;
   } else if (movingRight && !moveState.right.wasHeld) {
     if (!collides(piece.x + 1, piece.y)) {
       piece.x++;
+      lockTimer = 0;
     }
     moveTimer = 0;
   }
@@ -56,8 +60,10 @@ export function updateGame(dt) {
 
     if (movingLeft && !collides(piece.x - 1, piece.y)) {
       piece.x--;
+      lockTimer = 0;
     } else if (movingRight && !collides(piece.x + 1, piece.y)) {
       piece.x++;
+      lockTimer = 0;
     }
   }
 
@@ -74,19 +80,30 @@ export function updateGame(dt) {
     wasSoftDropping = softDropping;
   }
 
-  // "Gravity"
+  // "Gravity" (and lock delay)
   dropTimer += dt;
+  const interval = softDropping ? DROP_INTERVAL * 0.1 : DROP_INTERVAL;
 
-  // Interval can either be the regular drop time, or less if "soft-dropping"
-  const interval = inputState.down ? DROP_INTERVAL * 0.1 : DROP_INTERVAL;
-
-  if (dropTimer >= interval) {
+  while (dropTimer >= interval) {
     dropTimer -= interval;
 
     if (!collides(piece.x, piece.y + 1)) {
       piece.y++;
+      lockTimer = 0; // reset lock delay if falling
     } else {
+      // piece is "grounded" - but don't lock-in yet!
+      break;
+    }
+  }
+
+  // If "grounded", count lock delay in real time
+  if (collides(piece.x, piece.y + 1)) {
+    lockTimer += dt;
+
+    if (lockTimer >= LOCK_DELAY) {
+      // lock delay met or exceeded - time to lock the piece into the board
       lockPiece();
+      lockTimer = 0;
     }
   }
 }
