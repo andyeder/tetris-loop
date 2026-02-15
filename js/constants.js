@@ -97,6 +97,10 @@ const TETROMINOES = [
 const FIXED_DT = 1 / 60;
 const DROP_INTERVAL = 0.5; // seconds per row
 
+// The max frame time cap is used to prevent "spiral of death"
+//  in the event that frame hitches/lag become too large
+const MAX_FRAME_TIME = 0.25; // seconds
+
 // --------------------------------------------------
 // Lock delay
 // Period after which piece touches the stack and can
@@ -135,6 +139,7 @@ export {
   CELLSIZE,
   FIXED_DT,
   DROP_INTERVAL,
+  MAX_FRAME_TIME,
   LOCK_DELAY,
   DAS,
   ARR,

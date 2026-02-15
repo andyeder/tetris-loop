@@ -1,5 +1,5 @@
 import { initGame, updateGame } from './game.js';
-import { FIXED_DT } from './constants.js';
+import { FIXED_DT, MAX_FRAME_TIME } from './constants.js';
 import { render } from './renderer.js';
 
 let lastTime = performance.now() / 1000;
@@ -10,6 +10,10 @@ function frame() {
   let delta = now - lastTime;
   lastTime = now;
 
+  // Clamp large frame deltas to avoid "spiral of death"
+  //  - may be introduced by tab-switch, heavy OS operations, etc.
+  delta = Math.min(delta, MAX_FRAME_TIME);
+
   accumulator += delta;
 
   while (accumulator >= FIXED_DT) {
@@ -17,7 +21,10 @@ function frame() {
     accumulator -= FIXED_DT;
   }
 
-  render();
+  // TODO: for interpolation (although no plans to use it here)
+  // const alpha = accumulator / FIXED_DT;
+
+  render(/*alpha*/);
   requestAnimationFrame(frame);
 }
 
