@@ -1,18 +1,71 @@
-import { DROP_INTERVAL, MOVE_INTERVAL, LOCK_DELAY } from './constants.js';
+import { DROP_INTERVAL, LOCK_DELAY, DAS, ARR } from './constants.js';
 import { piece, collides, lockPiece, spawnPiece } from './piece.js';
 import { moveState, inputState, initInput } from './input.js';
 
 let dropTimer = 0;
 let wasSoftDropping = false; // to track whether or not user was "soft-dropping"
 let lockTimer = 0; // for lock-in (lock delay) timing
-let moveTimer = 0; // will be replaced when DAS + ARR implemented
 
 export function initGame() {
   initInput();
   spawnPiece();
 }
 
+// --------------------------------------------------
+// Movement handling
+// --------------------------------------------------
+function updateLateralMovement(dt) {
+  handleLateralMovement('left', -1, dt);
+  handleLateralMovement('right', 1, dt);
+}
+
+function handleLateralMovement(dir, dx, dt) {
+  const state = moveState[dir];
+
+  if (!state.held) {
+    // movement key released - reset
+    state.time = 0;
+    state.repeat = 0;
+    return;
+  }
+
+  state.time += dt;
+
+  // Immediate lateral move on press
+  if (state.time === dt) {
+    tryLateralMove(dx);
+    return;
+  }
+
+  // Auto-repeat phase only if already >= DAS timer
+  if (state.time >= DAS) {
+    if (ARR === 0) {
+      // Instant slide (special case for certain game types - akin to a "lateral hard-drop")
+      while (!collides(piece.x + dx, piece.y)) {
+        piece.x += dx;
+        lockTimer = 0; // IMPORTANT: reset lock timer when free moving (no collision)
+      }
+    } else {
+      state.repeat += dt;
+
+      if (state.repeat >= ARR) {
+        state.repeat -= ARR;
+        tryLateralMove(dx);
+      }
+    }
+  }
+}
+
+function tryLateralMove(dx) {
+  if (!collides(piece.x + dx, piece.y)) {
+    piece.x += dx;
+    lockTimer = 0; // IMPORTANT: reset lock timer when free moving (no collision)
+  }
+}
+
+// --------------------------------------------------
 // Execute the hard drop
+// --------------------------------------------------
 function hardDrop() {
   while (!collides(piece.x, piece.y + 1)) {
     piece.y++;
@@ -25,6 +78,9 @@ function hardDrop() {
   lockTimer = 0;
 }
 
+// --------------------------------------------------
+// Main game update loop
+// --------------------------------------------------
 export function updateGame(dt) {
   // Important - hard drop takes priority!
   if (inputState.hardDropRequested) {
@@ -33,43 +89,8 @@ export function updateGame(dt) {
     return; // no more processing this tick, start clean on next tick
   }
 
-  // TODO: implement DAS + ARR for Tetris style movement
-  const movingLeft = moveState.left.held;
-  const movingRight = moveState.right.held;
-
-  // Immediate move when key is first pressed - important to feel responsive
-  if (movingLeft && !moveState.left.wasHeld) {
-    if (!collides(piece.x - 1, piece.y)) {
-      piece.x--;
-      lockTimer = 0;
-    }
-    moveTimer = 0;
-  } else if (movingRight && !moveState.right.wasHeld) {
-    if (!collides(piece.x + 1, piece.y)) {
-      piece.x++;
-      lockTimer = 0;
-    }
-    moveTimer = 0;
-  }
-
-  // Repeated left/right movement whilst held
-  moveTimer += dt;
-
-  if (moveTimer >= MOVE_INTERVAL) {
-    moveTimer = 0;
-
-    if (movingLeft && !collides(piece.x - 1, piece.y)) {
-      piece.x--;
-      lockTimer = 0;
-    } else if (movingRight && !collides(piece.x + 1, piece.y)) {
-      piece.x++;
-      lockTimer = 0;
-    }
-  }
-
-  // Track previous held state
-  moveState.left.wasHeld = movingLeft;
-  moveState.right.wasHeld = movingRight;
+  // Process lateral (left/right) movement
+  updateLateralMovement(dt);
 
   // Soft-drop state handling
   //  - ensure we set drop timer to zero on a change of soft drop state
@@ -84,7 +105,33 @@ export function updateGame(dt) {
   dropTimer += dt;
   const interval = softDropping ? DROP_INTERVAL * 0.1 : DROP_INTERVAL;
 
-  while (dropTimer >= interval) {
+  //*******************************************************
+  // NOW... this poses an interesting problem...
+  // The code block below was originally:
+  //
+  // while (dropTimer >= interval)...
+  //
+  // This is physically correct. HOWEVER, in hindsight, it
+  // isn't the way that Tetris works and may cause unexpected
+  // behaviour under certain circumstances (if the game hitches/lags).
+  //
+  // The better option might be to use a single-step by changing to:
+  //
+  // if (dropTimer >= interval)...
+  //
+  // Whilst not physically correct, it is Tetris game-rule correct.
+  // The while loops ensures physics correctness but is arguably
+  // not right for grid-based/discrete games like Tetris. The
+  // while loop runs "simulation time" but Tetris is "game rule time".
+  // "Gravity" needs to behave as a single-step movement, not a physics
+  // catch-up system.
+  //
+  // NOTE: The fixed step accumulator remains as is, only the line above changes.
+  // This means DAS/ARR and lock delay timing remains consistent, and it
+  // remains independent of frame rate.
+  //*******************************************************
+  // while (dropTimer >= interval) {
+  if (dropTimer >= interval) {
     dropTimer -= interval;
 
     if (!collides(piece.x, piece.y + 1)) {
@@ -92,7 +139,7 @@ export function updateGame(dt) {
       lockTimer = 0; // reset lock delay if falling
     } else {
       // piece is "grounded" - but don't lock-in yet!
-      break;
+      // break;
     }
   }
 

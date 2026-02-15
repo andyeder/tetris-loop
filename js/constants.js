@@ -98,7 +98,6 @@ const FIXED_DT = 1 / 60;
 const DROP_INTERVAL = 0.5; // seconds per row
 
 // --------------------------------------------------
-// TODO: Implement this...
 // Lock delay
 // Period after which piece touches the stack and can
 // still be moved/rotated before being locked-in
@@ -106,7 +105,6 @@ const DROP_INTERVAL = 0.5; // seconds per row
 const LOCK_DELAY = 0.5; // seconds
 
 // --------------------------------------------------
-// TODO: Implement this...
 // DAS / AAR ("official" Tetris terms!)
 // Decouples the movement - i.e. NOT frame-based
 //
@@ -126,9 +124,8 @@ const LOCK_DELAY = 0.5; // seconds
 //   -> AAR = 0.05
 //  - "hyper/competitive" Tetris
 //   -> DAS = 0.10
-//   -> AAR = 0 (instant slide!)
+//   -> AAR = 0 (instant slide, "lateral hard-drop"!)
 // --------------------------------------------------
-const MOVE_INTERVAL = 0.15; // seconds
 const DAS = 0.15; // seconds
 const ARR = 0.05; // seconds
 
@@ -138,9 +135,8 @@ export {
   CELLSIZE,
   FIXED_DT,
   DROP_INTERVAL,
-  MOVE_INTERVAL,
   LOCK_DELAY,
-  // DAS,
-  // ARR,
+  DAS,
+  ARR,
   TETROMINOES,
 };

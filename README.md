@@ -19,11 +19,11 @@ Nothing special - just the following:
 - Support for "soft-drop" and "hard-drop"
 - Spawns pieces using "7-bag" randomisation (refill + shuffle)
 - Added lock-delay - the period between a piece grounding and being locked-in (during which a player can still move left/right)
+- Added DAS + ARR movement (https://tetris.wiki/DAS)
 
 ## TODO List
 
 - Add logic to clear completed lines and update board
-- DAS + ARR movement (https://tetris.wiki/DAS)
 - Tetromino/piece rotation with "wall kick" tables using SRS (https://tetris.wiki/Super_Rotation_System)
 - Add scoring and level progression
 - Add basic UI
