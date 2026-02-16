@@ -20,6 +20,7 @@ Nothing special - just the following:
 - Spawns pieces using "7-bag" randomisation (refill + shuffle)
 - Added lock-delay - the period between a piece grounding and being locked-in (during which a player can still move left/right)
 - Added DAS + ARR movement (https://tetris.wiki/DAS)
+- Added debug HUD - toggle with '~' (tilde) key
 
 ## TODO List
 
