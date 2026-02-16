@@ -16,8 +16,14 @@ export const inputState = {
 // Simple object to track left/right state
 //  - use state like this so we can use DAS + AAR later
 export const moveState = {
-  left: { held: false, wasHeld: false /* time: 0, repeat: 0 */ },
-  right: { held: false, wasHeld: false /* time: 0, repeat: 0 */ },
+  left: { held: false, time: 0, repeat: 0 },
+  right: { held: false, time: 0, repeat: 0 },
+};
+
+// Simple object to track left/right rotation
+export const rotationState = {
+  antiClockwise: { held: false, time: 0, repeat: 0 },
+  clockwise: { held: false, time: 0, repeat: 0 },
 };
 
 export function initInput() {
@@ -27,6 +33,9 @@ export function initInput() {
     if (e.key === 'ArrowDown') inputState.down = true;
 
     if (e.code === 'Space') inputState.hardDropRequested = true;
+
+    if (e.code === 'KeyZ') rotationState.antiClockwise.held = true;
+    if (e.code === 'KeyX') rotationState.clockwise.held = true;
 
     // Toggle DEBUG HUD
     if (e.key === '~') {
@@ -39,5 +48,8 @@ export function initInput() {
     if (e.key === 'ArrowLeft') moveState.left.held = false;
     if (e.key === 'ArrowRight') moveState.right.held = false;
     if (e.key === 'ArrowDown') inputState.down = false;
+
+    if (e.code === 'KeyZ') rotationState.antiClockwise.held = false;
+    if (e.code === 'KeyX') rotationState.clockwise.held = false;
   });
 }

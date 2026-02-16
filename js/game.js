@@ -1,6 +1,13 @@
-import { DROP_INTERVAL, LOCK_DELAY, DAS, ARR } from './constants.js';
-import { piece, collides, lockPiece, spawnPiece } from './piece.js';
-import { moveState, inputState, initInput } from './input.js';
+import { DROP_INTERVAL, LOCK_DELAY, DAS, ARR, DAR } from './constants.js';
+import {
+  piece,
+  collides,
+  lockPiece,
+  spawnPiece,
+  rotatePieceClockwise,
+  rotatePieceAntiClockwise,
+} from './piece.js';
+import { moveState, rotationState, inputState, initInput } from './input.js';
 
 let dropTimer = 0;
 let wasSoftDropping = false; // to track whether or not user was "soft-dropping"
@@ -64,6 +71,55 @@ function tryLateralMove(dx) {
 }
 
 // --------------------------------------------------
+// Rotation handling
+// --------------------------------------------------
+function updateRotation(dt) {
+  handleRotation('antiClockwise', dt);
+  handleRotation('clockwise', dt);
+}
+
+function handleRotation(dir, dt) {
+  const state = rotationState[dir];
+
+  if (!state.held) {
+    state.time = 0;
+    state.repeat = 0;
+    return;
+  }
+
+  state.time += dt;
+
+  // Immediate move on press
+  if (state.time === dt) {
+    tryRotate(dir);
+    return;
+  }
+
+  // Auto-repeat - if already >= DAR time
+  if (state.time >= DAR) {
+    if (ARR === 0) {
+    } else {
+      state.repeat += dt;
+
+      if (state.repeat >= ARR) {
+        state.repeat -= ARR;
+        tryRotate(dir);
+      }
+    }
+  }
+}
+
+function tryRotate(dir) {
+  if (dir === 'antiClockwise') {
+    rotatePieceAntiClockwise();
+  }
+
+  if (dir === 'clockwise') {
+    rotatePieceClockwise();
+  }
+}
+
+// --------------------------------------------------
 // Execute the hard drop
 // --------------------------------------------------
 function hardDrop() {
@@ -91,6 +147,9 @@ export function updateGame(dt) {
 
   // Process lateral (left/right) movement
   updateLateralMovement(dt);
+
+  // Process rotational movement
+  updateRotation(dt);
 
   // Soft-drop state handling
   //  - ensure we set drop timer to zero on a change of soft drop state
