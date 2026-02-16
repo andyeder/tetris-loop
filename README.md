@@ -17,7 +17,7 @@ Nothing special - just the following:
 - Based on "modern" Tetris conventions - colours, timings, etc.
 - Supports left/right movement (basic)
 - Support for "soft-drop" and "hard-drop"
-- Spawns pieces using "7-bag" randomisation (refill + shuffle)
+- Spawns pieces using "7-bag" randomisation (refill + shuffle) - https://tetris.wiki/Random_Generator and https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
 - Added lock-delay - the period between a piece grounding and being locked-in (during which a player can still move left/right)
 - Added DAS + ARR movement (https://tetris.wiki/DAS)
 - Added debug HUD - toggle with '~' (tilde) key
