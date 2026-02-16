@@ -21,11 +21,11 @@ Nothing special - just the following:
 - Added lock-delay - the period between a piece grounding and being locked-in (during which a player can still move left/right)
 - Added DAS + ARR movement (https://tetris.wiki/DAS)
 - Added debug HUD - toggle with '~' (tilde) key
+- Tetromino/piece rotation with "wall kick" tables using SRS (https://tetris.wiki/Super_Rotation_System)
 
 ## TODO List
 
 - Add logic to clear completed lines and update board
-- Tetromino/piece rotation with "wall kick" tables using SRS (https://tetris.wiki/Super_Rotation_System)
 - Add scoring and level progression
 - Add basic UI
 
