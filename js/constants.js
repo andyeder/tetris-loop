@@ -94,7 +94,8 @@ const TETROMINOES = [
 // --------------------------------------------------
 // Fixed-step timing
 // --------------------------------------------------
-const FIXED_DT = 1 / 60;
+const SIMULATION_RATE_HZ = 60;
+const FIXED_DT = 1 / SIMULATION_RATE_HZ;
 const DROP_INTERVAL = 0.5; // seconds per row
 
 // The max frame time cap is used to prevent "spiral of death"
@@ -140,6 +141,7 @@ export {
   FIXED_DT,
   DROP_INTERVAL,
   MAX_FRAME_TIME,
+  SIMULATION_RATE_HZ,
   LOCK_DELAY,
   DAS,
   ARR,

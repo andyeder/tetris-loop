@@ -15,8 +15,28 @@
   </head>
   <body>
     <h1 class="changa-one-regular">TETRIS BASICS</h1>
-    <canvas id="canvas"></canvas>
+
+    <main class="game-container">
+      <canvas id="canvas"></canvas>
+    </main>
+
     <div class="poppins-regular">Work-in-progress</div>
+
+    <!-- DEBUG HUD -->
+    <aside class="dev-hud poppins-regular" id="devHud">
+      <div class="hud-header poppins-light">DEBUGGING INFORMATION</div>
+
+      <div class="hud-content">
+        <div>Sim Speed (Hz): <span id="simulationRateHz">--</span></div>
+        <div>FPS: <span id="fps">--</span></div>
+        <div>Frame Delta (ms): <span id="delta">--</span></div>
+        <div>Accumulator: <span id="accumulator">--</span></div>
+        <div>Steps this frame: <span id="steps">--</span></div>
+        <div>Total steps: <span id="totalSteps">--</span></div>
+        <div>Alpha: <span id="alpha">--</span></div>
+        <div>Clamped: <span id="clamped">--</span></div>
+      </div>
+    </aside>
 
     <script type="module" src="./js/main.js"></script>
   </body>

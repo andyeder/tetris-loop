@@ -27,6 +27,12 @@ export function initInput() {
     if (e.key === 'ArrowDown') inputState.down = true;
 
     if (e.code === 'Space') inputState.hardDropRequested = true;
+
+    // Toggle DEBUG HUD
+    if (e.key === '~') {
+      e.preventDefault();
+      document.getElementById('devHud').classList.toggle('hidden');
+    }
   });
 
   window.addEventListener('keyup', (e) => {
