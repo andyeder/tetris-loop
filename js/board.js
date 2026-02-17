@@ -1,9 +1,13 @@
-import { ROWS, COLS } from './constants.js';
+import { COLS, TOTAL_ROWS } from './constants.js';
 
 // --------------------------------------------------
-// Board state (0 = empty) - 2D array (ROWS x COLS)
+// Board state (0 = empty) - 2D array (TOTAL_ROWS x COLS)
+// Buffer zone occupies rows 0 to 3 (hidden)
+// Visible board occupies rows 4 to (TOTAL_ROWS - 1)
 // --------------------------------------------------
-export const board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+export const board = Array.from({ length: TOTAL_ROWS }, () =>
+  Array(COLS).fill(0),
+);
 
 // Check if a row is completely filled
 function isRowComplete(row) {
@@ -14,7 +18,7 @@ function isRowComplete(row) {
 export function getCompletedLines() {
   const completedLines = [];
 
-  for (let y = 0; y < ROWS; y++) {
+  for (let y = 0; y < TOTAL_ROWS; y++) {
     if (isRowComplete(board[y])) {
       completedLines.push(y);
     }
@@ -35,7 +39,7 @@ export function clearCompletedLines() {
   // Build new board with non-completed rows
   const newBoard = [];
 
-  for (let y = 0; y < ROWS; y++) {
+  for (let y = 0; y < TOTAL_ROWS; y++) {
     if (!completedLines.includes(y)) {
       newBoard.push([...board[y]]);
     }
@@ -48,7 +52,7 @@ export function clearCompletedLines() {
   }
 
   // Replace board contents
-  for (let y = 0; y < ROWS; y++) {
+  for (let y = 0; y < TOTAL_ROWS; y++) {
     board[y] = newBoard[y];
   }
 
@@ -57,7 +61,7 @@ export function clearCompletedLines() {
 
 // Reset entire board to empty state
 export function resetBoard() {
-  for (let y = 0; y < ROWS; y++) {
+  for (let y = 0; y < TOTAL_ROWS; y++) {
     for (let x = 0; x < COLS; x++) {
       board[y][x] = 0;
     }

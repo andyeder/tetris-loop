@@ -1,13 +1,16 @@
 // --------------------------------------------------
 // Grid configuration - 10x20 is 'standard' Tetris
+//  - we also add a 4-row spawn buffer (not drawn)
 // --------------------------------------------------
 const COLS = 10;
 const ROWS = 20;
+const BUFFER_ROWS = 4;
+const TOTAL_ROWS = ROWS + BUFFER_ROWS;
 const CELLSIZE = 32;
 
 // --------------------------------------------------
 // Classic Tetrominoes - I/O/T/S/Z/J/L
-//  - defines shapes AND standardised colours
+//  - defines shapes AND standardised colours AND spawn points
 //
 // Based on "standard" rules, shapes spawn:
 //  - J, L, T: flat side facing downward
@@ -28,6 +31,8 @@ const TETROMINOES = [
       [0, 0, 0, 0],
     ],
     colour: 'oklch(0.9 0.1534 195)',
+    spawnX: 3,
+    spawnY: 2,
   },
 
   // O - Yellow
@@ -38,6 +43,8 @@ const TETROMINOES = [
       [0, 0, 0, 0],
     ],
     colour: 'oklch(0.9676 0.21 109.77)',
+    spawnX: 3,
+    spawnY: 3,
   },
 
   // T - Purple
@@ -48,6 +55,8 @@ const TETROMINOES = [
       [0, 0, 0],
     ],
     colour: 'oklch(0.597 0.2851 307.1079)',
+    spawnX: 3,
+    spawnY: 3,
   },
 
   // S - Green
@@ -58,6 +67,8 @@ const TETROMINOES = [
       [0, 0, 0],
     ],
     colour: 'oklch(0.8705 0.2829 142.4953)',
+    spawnX: 3,
+    spawnY: 3,
   },
 
   // Z - Red
@@ -68,6 +79,8 @@ const TETROMINOES = [
       [0, 0, 0],
     ],
     colour: 'oklch(0.6382 0.247 29.23)',
+    spawnX: 3,
+    spawnY: 3,
   },
 
   // J - Blue
@@ -78,6 +91,8 @@ const TETROMINOES = [
       [0, 0, 0],
     ],
     colour: 'oklch(0.55 0.2474 262.59)',
+    spawnX: 3,
+    spawnY: 3,
   },
 
   // L - Orange
@@ -88,6 +103,8 @@ const TETROMINOES = [
       [0, 0, 0],
     ],
     colour: 'oklch(0.8088 0.1628 73.41)',
+    spawnX: 3,
+    spawnY: 3,
   },
 ];
 
@@ -276,6 +293,8 @@ const LINES_PER_LEVELUP = 10;
 export {
   COLS,
   ROWS,
+  BUFFER_ROWS,
+  TOTAL_ROWS,
   CELLSIZE,
   FIXED_DT,
   DROP_INTERVAL,

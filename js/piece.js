@@ -2,7 +2,8 @@ import { getNextTetromino } from './utils.js';
 import { board, clearCompletedLines } from './board.js';
 import {
   COLS,
-  ROWS,
+  BUFFER_ROWS,
+  TOTAL_ROWS,
   WALL_KICK_TESTS_JLSTZ,
   WALL_KICK_TESTS_I,
 } from './constants.js';
@@ -15,6 +16,7 @@ export let piece = {
   colour: '',
   x: 0,
   y: 0,
+  isVisible: false, // true once ANY FILLED CELL of the shape reaches visible area of play board
 };
 
 // --------------------------------------------------
@@ -33,8 +35,10 @@ export function spawnPiece() {
   const tetromino = getNextTetromino();
   piece.shape = cloneTetrominoShape(tetromino.shape);
   piece.colour = tetromino.colour;
-  piece.x = 3;
-  piece.y = 0;
+  // Spawn locations based on Tetris guidelines and baked in Tetrominoes data
+  piece.x = tetromino.spawnX;
+  piece.y = tetromino.spawnY;
+  piece.isVisible = false; // Must reset on each spawn
 
   orientationState = 0; // Reset to default (spawn) orientation
 }
@@ -208,7 +212,12 @@ export function collides(px, py) {
       const gx = px + x;
       const gy = py + y;
 
-      if (gx < 0 || gx >= COLS || gy >= ROWS || (gy >= 0 && board[gy][gx])) {
+      if (
+        gx < 0 ||
+        gx >= COLS ||
+        gy >= TOTAL_ROWS ||
+        (gy >= 0 && board[gy][gx])
+      ) {
         return true;
       }
     }
@@ -235,4 +244,22 @@ export function lockPiece() {
   spawnPiece();
 
   return linesCleared;
+}
+
+// Check if any filled cell has reached the visible area
+// and latch the flag - once true it stays true for this piece
+export function updateVisibility() {
+  if (piece.isVisible) {
+    // Early out - already true
+    return;
+  }
+
+  for (let y = 0; y < piece.shape.length; y++) {
+    for (let x = 0; x < piece.shape[y].length; x++) {
+      if (piece.shape[y][x] && piece.y + y >= BUFFER_ROWS) {
+        piece.hasEnteredVisibleArea = true;
+        return;
+      }
+    }
+  }
 }

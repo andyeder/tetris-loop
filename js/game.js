@@ -6,6 +6,7 @@ import {
   DAR,
   SCORING_TABLE,
   LINES_PER_LEVELUP,
+  BUFFER_ROWS,
 } from './constants.js';
 import {
   piece,
@@ -14,6 +15,7 @@ import {
   spawnPiece,
   rotatePieceClockwise,
   rotatePieceAntiClockwise,
+  updateVisibility,
 } from './piece.js';
 import { moveState, rotationState, inputState, initInput } from './input.js';
 
@@ -26,11 +28,37 @@ export const gameState = {
   score: 0,
   level: 1,
   linesCleared: 0,
+  isGameOver: false,
 };
 
 export function initGame() {
   initInput();
   spawnPiece();
+}
+
+// --------------------------------------------------
+// Game over conditions (Tetris guideline)
+// --------------------------------------------------
+
+// "Block out" - when a piece spawns but IMMEDIATELY COLLIDES with locked pieces
+function isBlockOut() {
+  return collides(piece.x, piece.y);
+}
+
+// "Lock out" - piece locks entirely within the buffer zone
+function isLockOut() {
+  return !piece.hasEnteredVisibleArea;
+}
+
+// Game over check becomes trivial based on above
+function isGameOver() {
+  return isBlockOut() || isLockOut();
+}
+
+// Handle game over
+function handleGameOver() {
+  gameState.isGameOver = true;
+  console.log('Game over! Final score:', gameState.score);
 }
 
 // --------------------------------------------------
@@ -156,20 +184,34 @@ function hardDrop() {
     piece.y++;
   }
 
+  // Update visibility flag after ANY movement
+  updateVisibility();
+
   const lines = lockPiece();
   if (lines > 0) {
     updateScore(lines);
   }
 
+  if (isGameOver()) {
+    handleGameOver();
+    return;
+  }
+
   // Reset timers so the next piece starts clean
   dropTimer = 0;
   lockTimer = 0;
+  wasSoftDropping = false;
 }
 
 // --------------------------------------------------
 // Main game update loop
 // --------------------------------------------------
 export function updateGame(dt) {
+  if (gameState.isGameOver) {
+    // Early out - game is over!
+    return;
+  }
+
   // Important - hard drop takes priority!
   if (inputState.hardDropRequested) {
     hardDrop();
@@ -234,6 +276,9 @@ export function updateGame(dt) {
     }
   }
 
+  // Update visibility flag after ANY movement
+  updateVisibility();
+
   // If "grounded", count lock delay in real time
   if (collides(piece.x, piece.y + 1)) {
     lockTimer += dt;
@@ -245,7 +290,14 @@ export function updateGame(dt) {
         updateScore(lines);
       }
 
+      if (isGameOver()) {
+        handleGameOver();
+        return;
+      }
+
       lockTimer = 0;
+      dropTimer = 0;
+      wasSoftDropping = false;
     }
   }
 }
