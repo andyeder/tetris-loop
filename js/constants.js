@@ -152,8 +152,10 @@ const LOCK_DELAY = 0.5; // seconds
 //   -> AAR = 0 (instant slide, "lateral hard-drop"!)
 // --------------------------------------------------
 const DAS = 0.15; // seconds
-const DAR = 0.1; // seconds (made this term up!)
 const ARR = 0.05; // seconds
+
+const DAR = 0.1; // seconds (for rotation, made this term up!)
+const ARR_ROTATE = 0.2; // seconds (for rotation, made this term up!)
 
 // --------------------------------------------------
 // SRS Wall Kick Data - Modern Tetris
@@ -310,6 +312,7 @@ export {
   ARR,
   TETROMINOES,
   DAR,
+  ARR_ROTATE,
   WALL_KICK_TESTS_JLSTZ,
   WALL_KICK_TESTS_I,
   SCORING_TABLE,

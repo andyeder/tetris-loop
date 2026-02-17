@@ -3,6 +3,7 @@ import {
   DAS,
   ARR,
   DAR,
+  ARR_ROTATE,
   SCORING_TABLE,
   LINES_PER_LEVELUP,
 } from './constants.js';
@@ -153,14 +154,11 @@ function handleRotation(dir, dt) {
 
   // Auto-repeat - if already >= DAR time
   if (state.time >= DAR) {
-    if (ARR === 0) {
-    } else {
-      state.repeat += dt;
+    state.repeat += dt;
 
-      if (state.repeat >= ARR) {
-        state.repeat -= ARR;
-        tryRotate(dir);
-      }
+    if (state.repeat >= ARR_ROTATE) {
+      state.repeat -= ARR_ROTATE;
+      tryRotate(dir);
     }
   }
 }
