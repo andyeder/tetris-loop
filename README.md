@@ -22,10 +22,10 @@ Nothing special - just the following:
 - Added DAS + ARR movement (https://tetris.wiki/DAS)
 - Added debug HUD - toggle with '~' (tilde) key
 - Tetromino/piece rotation with "wall kick" tables using SRS (https://tetris.wiki/Super_Rotation_System)
+- Clears completed lines and updates board
 
 ## TODO List
 
-- Add logic to clear completed lines and update board
 - Add scoring and level progression
 - Add basic UI
 

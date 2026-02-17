@@ -8,6 +8,7 @@ import {
   rotatePieceAntiClockwise,
 } from './piece.js';
 import { moveState, rotationState, inputState, initInput } from './input.js';
+import { clearCompletedLines } from './board.js';
 
 let dropTimer = 0;
 let wasSoftDropping = false; // to track whether or not user was "soft-dropping"
@@ -211,5 +212,11 @@ export function updateGame(dt) {
       lockPiece();
       lockTimer = 0;
     }
+  }
+
+  // Check for completed lines
+  const linesCleared = clearCompletedLines();
+  if (linesCleared > 0) {
+    // TODO: update score, level progression, etc.
   }
 }
