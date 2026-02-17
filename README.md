@@ -27,10 +27,10 @@ Nothing special - just the following:
 - Added basic game HUD
 - Add piece spawning in a non-rendered buffer zone atop the board (viewable in debug mode)
 - Game over detection
+- Increase drop speed as level increases
 
 ## TODO List
 
-- Increase drop speed as level increases
 - Nice to have - "Next piece" preview
 - Nice to have - sounds effects / music
 - Nice to have - score / leaderboard

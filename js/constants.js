@@ -113,7 +113,10 @@ const TETROMINOES = [
 // --------------------------------------------------
 const SIMULATION_RATE_HZ = 60;
 const FIXED_DT = 1 / SIMULATION_RATE_HZ;
-const DROP_INTERVAL = 0.5; // seconds per row
+
+const BASE_DROP_INTERVAL = 1.0; // baseline drop rate (seconds per row)
+const DROP_DECAY_RATE = 0.9; // decrease by ~10% per level
+const MIN_DROP_INTERVAL = 0.05; // cap at 50ms (to prevent impossibly fast drop speeds)
 
 // The max frame time cap is used to prevent "spiral of death"
 //  in the event that frame hitches/lag become too large
@@ -297,7 +300,9 @@ export {
   TOTAL_ROWS,
   CELLSIZE,
   FIXED_DT,
-  DROP_INTERVAL,
+  BASE_DROP_INTERVAL,
+  MIN_DROP_INTERVAL,
+  DROP_DECAY_RATE,
   MAX_FRAME_TIME,
   SIMULATION_RATE_HZ,
   LOCK_DELAY,

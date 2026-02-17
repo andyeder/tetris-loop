@@ -1,4 +1,9 @@
-import { TETROMINOES } from './constants.js';
+import {
+  TETROMINOES,
+  BASE_DROP_INTERVAL,
+  MIN_DROP_INTERVAL,
+  DROP_DECAY_RATE,
+} from './constants.js';
 
 // --------------------------------------------------
 // 7-Bag Randomisation - apparently, modern Tetris
@@ -50,3 +55,32 @@ export function getNextTetromino() {
   }
   return sevenBag.pop();
 }
+
+// --------------------------------------------------
+// Drop speed calculations (implementing two methods)
+//  1. Naive time-based (simple exponential)
+//  2. "Classic" based on frames per drop, converted to secs
+// --------------------------------------------------
+
+// 1. Simple exponential - purely time-based
+export function getDropIntervalSimple(level) {
+  const interval = BASE_DROP_INTERVAL * Math.pow(DROP_DECAY_RATE, level - 1);
+  return Math.max(interval, MIN_DROP_INTERVAL);
+}
+
+// Method 2: "Classic" Tetris formula
+// Based on frames per drop at 60fps, converted to seconds
+export function getDropIntervalClassic(level) {
+  // Original formula (assumes 60fps): frames per drop = (11 - level)^0.9 * 5
+  const framesPerDrop = Math.pow(11 - Math.min(level, 10), 0.9) * 5;
+
+  // Convert frames (at 60fps) to seconds
+  // ALWAYS / 60 regardless of SIMULATION_RATE_HZ as formula assumes 60fps timing
+  const interval = framesPerDrop / 60;
+
+  return Math.max(interval, MIN_DROP_INTERVAL);
+}
+
+// Choose desired drop intervbal method...
+//export const getDropInterval = getDropIntervalSimple;
+export const getDropInterval = getDropIntervalClassic;

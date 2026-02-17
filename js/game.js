@@ -1,12 +1,10 @@
 import {
-  DROP_INTERVAL,
   LOCK_DELAY,
   DAS,
   ARR,
   DAR,
   SCORING_TABLE,
   LINES_PER_LEVELUP,
-  BUFFER_ROWS,
 } from './constants.js';
 import {
   piece,
@@ -18,6 +16,7 @@ import {
   updateVisibility,
 } from './piece.js';
 import { moveState, rotationState, inputState, initInput } from './input.js';
+import { getDropInterval } from './utils.js';
 
 let dropTimer = 0;
 let wasSoftDropping = false; // to track whether or not user was "soft-dropping"
@@ -236,7 +235,10 @@ export function updateGame(dt) {
 
   // "Gravity" (and lock delay)
   dropTimer += dt;
-  const interval = softDropping ? DROP_INTERVAL * 0.1 : DROP_INTERVAL;
+
+  // Calculate drop interval based on current level
+  const baseInterval = getDropInterval(gameState.level);
+  const interval = softDropping ? baseInterval * 0.1 : baseInterval;
 
   //*******************************************************
   // NOW... this poses an interesting problem...
