@@ -27,7 +27,7 @@ const TETROMINOES = [
       [0, 0, 0, 0],
       [0, 0, 0, 0],
     ],
-    colour: '#00F0F0',
+    colour: 'oklch(0.9 0.1534 195)',
   },
 
   // O - Yellow
@@ -37,7 +37,7 @@ const TETROMINOES = [
       [0, 1, 1, 0],
       [0, 0, 0, 0],
     ],
-    colour: '#F0F000',
+    colour: 'oklch(0.9676 0.21 109.77)',
   },
 
   // T - Purple
@@ -47,7 +47,7 @@ const TETROMINOES = [
       [1, 1, 1],
       [0, 0, 0],
     ],
-    colour: '#A000F0',
+    colour: 'oklch(0.597 0.2851 307.1079)',
   },
 
   // S - Green
@@ -57,7 +57,7 @@ const TETROMINOES = [
       [1, 1, 0],
       [0, 0, 0],
     ],
-    colour: '#00F000',
+    colour: 'oklch(0.8705 0.2829 142.4953)',
   },
 
   // Z - Red
@@ -67,7 +67,7 @@ const TETROMINOES = [
       [0, 1, 1],
       [0, 0, 0],
     ],
-    colour: '#F00000',
+    colour: 'oklch(0.6382 0.247 29.23)',
   },
 
   // J - Blue
@@ -77,7 +77,7 @@ const TETROMINOES = [
       [1, 1, 1],
       [0, 0, 0],
     ],
-    colour: '#0050F0',
+    colour: 'oklch(0.55 0.2474 262.59)',
   },
 
   // L - Orange
@@ -87,7 +87,7 @@ const TETROMINOES = [
       [1, 1, 1],
       [0, 0, 0],
     ],
-    colour: '#F0A000',
+    colour: 'oklch(0.8088 0.1628 73.41)',
   },
 ];
 
