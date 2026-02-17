@@ -193,6 +193,14 @@ canvas {
 
   font-size: 0.85rem;
   pointer-events: none; /* doesn't interfere with gameplay */
+
+  transition:
+    opacity 0.5s,
+    transform 0.5s;
+  @starting-style {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 }
 
 .hud-header {
@@ -210,4 +218,35 @@ canvas {
 
 .hidden {
   display: none;
+}
+
+.score-hud {
+  position: absolute;
+  left: calc(100% + 1.5rem);
+  top: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  min-width: 120px;
+}
+
+.score-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.score-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  opacity: 0.6;
+  color: white;
+}
+
+.score-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
 }

@@ -1,6 +1,7 @@
 import { COLS, ROWS, CELLSIZE } from './constants.js';
 import { board } from './board.js';
 import { piece } from './piece.js';
+import { gameState } from './game.js';
 
 const GRID_BACKGROUND_COLOUR = '#3F3F3F';
 
@@ -15,6 +16,17 @@ canvas.height = ROWS * CELLSIZE;
 function drawCell(x, y, colour) {
   ctx.fillStyle = colour;
   ctx.fillRect(x * CELLSIZE, y * CELLSIZE, CELLSIZE - 1, CELLSIZE - 1);
+}
+
+function drawGameHUD() {
+  const set = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  set('score', gameState.score.toLocaleString());
+  set('level', gameState.level);
+  set('lines', gameState.linesCleared);
 }
 
 export function render() {
@@ -53,4 +65,7 @@ export function render() {
       }
     }
   }
+
+  // Draw the game UI
+  drawGameHUD();
 }

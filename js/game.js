@@ -1,4 +1,12 @@
-import { DROP_INTERVAL, LOCK_DELAY, DAS, ARR, DAR } from './constants.js';
+import {
+  DROP_INTERVAL,
+  LOCK_DELAY,
+  DAS,
+  ARR,
+  DAR,
+  SCORING_TABLE,
+  LINES_PER_LEVELUP,
+} from './constants.js';
 import {
   piece,
   collides,
@@ -8,15 +16,35 @@ import {
   rotatePieceAntiClockwise,
 } from './piece.js';
 import { moveState, rotationState, inputState, initInput } from './input.js';
-import { clearCompletedLines } from './board.js';
 
 let dropTimer = 0;
 let wasSoftDropping = false; // to track whether or not user was "soft-dropping"
 let lockTimer = 0; // for lock-in (lock delay) timing
 
+// Game state management
+export const gameState = {
+  score: 0,
+  level: 1,
+  linesCleared: 0,
+};
+
 export function initGame() {
   initInput();
   spawnPiece();
+}
+
+// --------------------------------------------------
+// Score / level update - work-in-progress
+// --------------------------------------------------
+function updateScore(lines) {
+  // Standard Tetris scoring - multiplied by current level
+  gameState.score += SCORING_TABLE[lines] * gameState.level;
+
+  // Track total lines cleared
+  gameState.linesCleared += lines;
+
+  // Level up every LINES_PER_LEVELUP lines
+  gameState.level = Math.floor(gameState.linesCleared / LINES_PER_LEVELUP) + 1;
 }
 
 // --------------------------------------------------
@@ -128,7 +156,10 @@ function hardDrop() {
     piece.y++;
   }
 
-  lockPiece();
+  const lines = lockPiece();
+  if (lines > 0) {
+    updateScore(lines);
+  }
 
   // Reset timers so the next piece starts clean
   dropTimer = 0;
@@ -209,14 +240,12 @@ export function updateGame(dt) {
 
     if (lockTimer >= LOCK_DELAY) {
       // lock delay met or exceeded - time to lock the piece into the board
-      lockPiece();
+      const lines = lockPiece();
+      if (lines > 0) {
+        updateScore(lines);
+      }
+
       lockTimer = 0;
     }
-  }
-
-  // Check for completed lines
-  const linesCleared = clearCompletedLines();
-  if (linesCleared > 0) {
-    // TODO: update score, level progression, etc.
   }
 }

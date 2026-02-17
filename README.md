@@ -23,11 +23,17 @@ Nothing special - just the following:
 - Added debug HUD - toggle with '~' (tilde) key
 - Tetromino/piece rotation with "wall kick" tables using SRS (https://tetris.wiki/Super_Rotation_System)
 - Clears completed lines and updates board
+- Added basic scoring and level progression (level increases every N lines cleared - typically 10)
+- Added basic game HUD
 
 ## TODO List
 
-- Add scoring and level progression
-- Add basic UI
+- Increase drop speed as level increases
+- Add piece spawning in a non-rendered buffer zone atop the board
+- Game over detection
+- Nice to have - "Next piece" preview
+- Nice to have - sounds effects / music
+- Nice to have - score / leaderboard
 
 ## Controls
 

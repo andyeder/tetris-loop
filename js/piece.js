@@ -1,5 +1,5 @@
 import { getNextTetromino } from './utils.js';
-import { board } from './board.js';
+import { board, clearCompletedLines } from './board.js';
 import {
   COLS,
   ROWS,
@@ -228,6 +228,11 @@ export function lockPiece() {
     }
   }
 
+  // Clear completed lines (return count to caller)
+  const linesCleared = clearCompletedLines();
+
   // Respawn piece
   spawnPiece();
+
+  return linesCleared;
 }

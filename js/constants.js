@@ -264,6 +264,15 @@ const WALL_KICK_TESTS_I = {
   ],
 };
 
+// --------------------------------------------------
+// Scoring table for when lines are cleared
+// 1 line = 100, 2 lines = 300, 3 lines = 500, 4 lines = 800 (Tetris!)
+// (usually multiplied by current level)
+// --------------------------------------------------
+const SCORING_TABLE = [0, 100, 300, 500, 800];
+
+const LINES_PER_LEVELUP = 10;
+
 export {
   COLS,
   ROWS,
@@ -279,4 +288,6 @@ export {
   DAR,
   WALL_KICK_TESTS_JLSTZ,
   WALL_KICK_TESTS_I,
+  SCORING_TABLE,
+  LINES_PER_LEVELUP,
 };
