@@ -28,12 +28,11 @@ Nothing special - just the following:
 - Add piece spawning in a non-rendered buffer zone atop the board (viewable in debug mode)
 - Game over detection
 - Increase drop speed as level increases
+- "Next piece" preview
 
 ## TODO List
 
-- Nice to have - "Next piece" preview
 - Nice to have - sounds effects / music
-- Nice to have - score / leaderboard
 - Nice to have - make mobile friendly
 
 ## Controls

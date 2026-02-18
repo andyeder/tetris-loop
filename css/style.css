@@ -164,8 +164,8 @@ body {
 }
 
 canvas {
-  background: #2f2f2f;
-  box-shadow: 0 0px 50px black;
+  background: oklch(0.3 0 0);
+  box-shadow: 0 0px 50px oklch(0 0 0 / 0.65);
 }
 
 .game-container {
@@ -249,4 +249,29 @@ canvas {
   font-size: 1.5rem;
   font-weight: 600;
   color: white;
+}
+
+.preview-container {
+  position: absolute;
+  left: calc(100% + 1rem);
+  bottom: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.preview-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  opacity: 0.6;
+  color: white;
+}
+
+#previewCanvas {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  box-shadow: 0 0 10px oklch(1 0 0 / 0.1);
+  max-inline-size: none;
 }

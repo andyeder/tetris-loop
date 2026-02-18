@@ -2,6 +2,7 @@ import { COLS, ROWS, BUFFER_ROWS, TOTAL_ROWS, CELLSIZE } from './constants.js';
 import { board } from './board.js';
 import { piece } from './piece.js';
 import { gameState } from './game.js';
+import { peekNextTetromino } from './utils.js';
 
 const GRID_BACKGROUND_COLOUR = 'oklch(0.3 0 0)';
 const GRID_LINE_COLOUR = 'oklch(0.375 0 0)';
@@ -10,6 +11,16 @@ const BUFFER_ZONE_COLOUR = 'oklch(0.3 0.2 20 / 0.25)';
 // Get canvas element/context
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
+
+// Preview canvas element/context
+const previewCanvas = document.getElementById('previewCanvas');
+const previewCtx = previewCanvas.getContext('2d');
+
+// Setup preview canvas size (4x4 cells)
+const PREVIEW_CELL_SIZE = CELLSIZE / 2;
+const PREVIEW_CANVAS_PADDING = CELLSIZE / 2;
+previewCanvas.width = 4 * PREVIEW_CELL_SIZE + PREVIEW_CANVAS_PADDING;
+previewCanvas.height = 4 * PREVIEW_CELL_SIZE + PREVIEW_CANVAS_PADDING;
 
 // Check if debug HUD is visible
 function isDebugMode() {
@@ -26,9 +37,66 @@ function updateCanvasSize() {
 // Initial canvas setup
 updateCanvasSize();
 
+// Draw a single cell at a specific position with given colour
 function drawCell(x, y, colour) {
   ctx.fillStyle = colour;
   ctx.fillRect(x * CELLSIZE, y * CELLSIZE, CELLSIZE - 1, CELLSIZE - 1);
+}
+
+// Draw a single cell at a specific position with given colour and size
+//  - use this for "next piece preview"
+function drawCellAt(context, x, y, size, colour) {
+  context.fillStyle = colour;
+  context.fillRect(x, y, size - 1, size - 1);
+}
+
+function drawNextPiecePreview() {
+  const next = peekNextTetromino();
+
+  if (!next) {
+    return;
+  }
+
+  // Clear preview canvas
+  previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+
+  // Calculate centering offset for the piece
+  const shapeHeight = next.shape.length;
+  const shapeWidth = next.shape[0].length;
+
+  // Count actual filled rows/cols to center properly
+  let minY = shapeHeight,
+    maxY = 0,
+    minX = shapeWidth,
+    maxX = 0;
+  for (let y = 0; y < shapeHeight; y++) {
+    for (let x = 0; x < shapeWidth; x++) {
+      if (next.shape[y][x]) {
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+      }
+    }
+  }
+
+  const filledWidth = maxX - minX + 1;
+  const filledHeight = maxY - minY + 1;
+  const offsetX =
+    PREVIEW_CANVAS_PADDING / 2 + ((4 - filledWidth) * PREVIEW_CELL_SIZE) / 2;
+  const offsetY =
+    PREVIEW_CANVAS_PADDING / 2 + ((4 - filledHeight) * PREVIEW_CELL_SIZE) / 2;
+
+  // Draw the piece
+  for (let y = 0; y < shapeHeight; y++) {
+    for (let x = 0; x < shapeWidth; x++) {
+      if (next.shape[y][x]) {
+        const px = offsetX + (x - minX) * PREVIEW_CELL_SIZE;
+        const py = offsetY + (y - minY) * PREVIEW_CELL_SIZE;
+        drawCellAt(previewCtx, px, py, PREVIEW_CELL_SIZE, next.colour);
+      }
+    }
+  }
 }
 
 function drawGameHUD() {
@@ -130,6 +198,9 @@ export function render() {
       }
     }
   }
+
+  // Draw "next piece preview"
+  drawNextPiecePreview();
 
   // Draw game over overlay (if applicable)
   if (gameState.isGameOver) {

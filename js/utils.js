@@ -34,10 +34,14 @@ import {
 //  already locked in place
 //
 // More info: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+//
+// Extending this to facilitate "next piece preview" feature
 // --------------------------------------------------
 let sevenBag = [];
+let nextPiece = null; // store upcoming piece
 
 function shuffleBag(array) {
+  // Fisher-Yates
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
@@ -50,10 +54,30 @@ function refillBag() {
 }
 
 export function getNextTetromino() {
+  // If no next piece queued, initialise it
+  if (nextPiece === null) {
+    if (sevenBag.length === 0) {
+      refillBag();
+    }
+
+    nextPiece = sevenBag.pop();
+  }
+
+  // Current piece becomes the queued next piece
+  const current = nextPiece;
+
+  // Queue up the following (next preview) piece - check to see if we need to refill!
   if (sevenBag.length === 0) {
     refillBag();
   }
-  return sevenBag.pop();
+  nextPiece = sevenBag.pop();
+
+  return current;
+}
+
+// Export peek function (so renderer can access it!)
+export function peekNextTetromino() {
+  return nextPiece;
 }
 
 // --------------------------------------------------

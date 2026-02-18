@@ -19,7 +19,13 @@
     <main class="game-container">
       <canvas id="canvas"></canvas>
 
-      <!-- Game UI/HUD -->
+      <!-- "Next piece preview" canvas - easier to do this than work around single canvas clipping issues... -->
+      <div class="preview-container">
+        <div class="preview-label poppins-light">NEXT</div>
+        <canvas id="previewCanvas"></canvas>
+      </div>
+
+      <!-- Game HUD -->
       <aside class="score-hud poppins-regular">
         <div class="score-block">
           <div class="score-label poppins-light">SCORE</div>
