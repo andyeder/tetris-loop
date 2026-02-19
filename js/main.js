@@ -6,6 +6,7 @@ import { updateDebugHUD } from './debug.js';
 let lastTime = performance.now() / 1000;
 let accumulator = 0;
 let debugTotalSteps = 0;
+let gameStarted = false;
 
 function frame() {
   const now = performance.now() / 1000;
@@ -26,7 +27,10 @@ function frame() {
   let debugStepsThisFrame = 0;
 
   while (accumulator >= FIXED_DT) {
-    updateGame(FIXED_DT);
+    if (gameStarted) {
+      updateGame(FIXED_DT);
+    }
+
     accumulator -= FIXED_DT;
 
     debugStepsThisFrame++;
@@ -49,5 +53,13 @@ function frame() {
   requestAnimationFrame(frame);
 }
 
-initGame();
+// Start button handler
+document.getElementById('startButton').addEventListener('click', () => {
+  const startScreen = document.getElementById('startScreen');
+  startScreen.classList.add('hidden');
+
+  initGame();
+  gameStarted = true;
+});
+
 requestAnimationFrame(frame);

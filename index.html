@@ -19,6 +19,20 @@
     <main class="game-container">
       <canvas id="canvas"></canvas>
 
+      <!-- Start screen overlay -->
+      <div class="start-screen" id="startScreen">
+        <div class="changa-one-regular prompt">READY?</div>
+        <button id="startButton" class="start-button poppins-semibold">
+          START GAME
+        </button>
+        <div class="controls-hint poppins-light">
+          <p>← → Move</p>
+          <p>↓ Soft Drop</p>
+          <p>Space Hard Drop</p>
+          <p>Z Rotate Left | X Rotate Right</p>
+        </div>
+      </div>
+
       <!-- "Next piece preview" canvas - easier to do this than work around single canvas clipping issues... -->
       <div class="preview-container">
         <div class="preview-label poppins-light">NEXT</div>

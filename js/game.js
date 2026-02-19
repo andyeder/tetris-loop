@@ -29,9 +29,21 @@ export const gameState = {
   level: 1,
   linesCleared: 0,
   isGameOver: false,
+  hasStarted: false,
 };
 
+function resetGame() {
+  // Reset game state
+  gameState.score = 0;
+  gameState.level = 1;
+  gameState.linesCleared = 0;
+  gameState.isGameOver = false;
+  gameState.hasStarted = true;
+}
+
 export function initGame() {
+  resetGame();
+
   initInput();
   spawnPiece();
 }
@@ -67,10 +79,8 @@ function handleGameOver() {
 function updateScore(lines) {
   // Standard Tetris scoring - multiplied by current level
   gameState.score += SCORING_TABLE[lines] * gameState.level;
-
   // Track total lines cleared
   gameState.linesCleared += lines;
-
   // Level up every LINES_PER_LEVELUP lines
   gameState.level = Math.floor(gameState.linesCleared / LINES_PER_LEVELUP) + 1;
 }
