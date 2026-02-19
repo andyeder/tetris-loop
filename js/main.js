@@ -2,7 +2,15 @@ import { initGame, updateGame } from './game.js';
 import { FIXED_DT, MAX_FRAME_TIME } from './constants.js';
 import { render } from './renderer.js';
 import { updateDebugHUD } from './debug.js';
-import { initAudio } from './audio.js';
+import {
+  initAudio,
+  setSfxEnabled,
+  setMusicEnabled,
+  loadSfxEnabled,
+  loadMusicEnabled,
+  saveSfxEnabled,
+  saveMusicEnabled,
+} from './audio.js';
 
 let lastTime = performance.now() / 1000;
 let accumulator = 0;
@@ -64,4 +72,27 @@ document.getElementById('startButton').addEventListener('click', () => {
   gameStarted = true;
 });
 
+// Load audio settings from localStorage
+const sfxCheckbox = document.getElementById('toggleSfx');
+const musicCheckbox = document.getElementById('toggleMusic');
+
+sfxCheckbox.checked = loadSfxEnabled();
+setSfxEnabled(sfxCheckbox.checked);
+
+musicCheckbox.checked = loadMusicEnabled();
+setMusicEnabled(musicCheckbox.checked);
+
+sfxCheckbox.addEventListener('change', (e) => {
+  const enabled = e.target.checked;
+  setSfxEnabled(enabled);
+  saveSfxEnabled(enabled);
+});
+
+musicCheckbox.addEventListener('change', (e) => {
+  const enabled = e.target.checked;
+  setMusicEnabled(enabled);
+  saveMusicEnabled(enabled);
+});
+
+// Kick things off!
 requestAnimationFrame(frame);

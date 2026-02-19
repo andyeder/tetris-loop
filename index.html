@@ -22,24 +22,37 @@
       <!-- Start screen overlay -->
       <div class="start-screen" id="startScreen">
         <div class="changa-one-regular prompt">READY?</div>
+
+        <!-- Start button -->
         <button id="startButton" class="start-button poppins-semibold">
           START GAME
         </button>
+
+        <!-- Player controls -->
         <div class="controls-hint poppins-light">
           <p class="action">Move Left and Right</p>
-          <p class="inputs">Arrow Key Left | Right</p>
+          <p class="inputs">Arrow Left and Arrow Right</p>
 
-          <p class="action">Soft Drop</p>
-          <p class="inputs">Arrow Key Down</p>
-
-          <p class="action">Hard Drop</p>
-          <p class="inputs">Space Bar</p>
+          <p class="action">Soft Drop / Hard Drop</p>
+          <p class="inputs">Arrow Down / Space Bar</p>
 
           <p class="action">Rotate Left and Right</p>
-          <p class="inputs">Z | X</p>
+          <p class="inputs">Z and X</p>
 
           <p class="action">Debug Stats</p>
           <p class="inputs">~ (Tilde)</p>
+        </div>
+
+        <!-- Audio settings -->
+        <div class="audio-settings poppins-regular">
+          <label class="audio-toggle">
+            <input type="checkbox" id="toggleSfx" checked />
+            <span>Sound FX</span>
+          </label>
+          <label class="audio-toggle">
+            <input type="checkbox" id="toggleMusic" checked />
+            <span>Music</span>
+          </label>
         </div>
       </div>
 
