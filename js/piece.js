@@ -7,6 +7,7 @@ import {
   WALL_KICK_TESTS_JLSTZ,
   WALL_KICK_TESTS_I,
 } from './constants.js';
+import { playAudio } from './audio.js';
 
 // --------------------------------------------------
 // Current (active) piece / Tetromino
@@ -236,6 +237,8 @@ export function lockPiece() {
       }
     }
   }
+
+  playAudio('sndLockPiece');
 
   // Clear completed lines (return count to caller)
   const linesCleared = clearCompletedLines();

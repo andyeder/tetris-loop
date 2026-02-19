@@ -151,7 +151,7 @@
 
 body {
   margin: 0;
-  background: #1f1f1f;
+  background: oklch(0.24 0 270);
 
   display: flex;
   flex-direction: column;
@@ -175,6 +175,18 @@ canvas {
   align-items: center;
 }
 
+.text-header {
+  color: oklch(0.65 0.2 300);
+  text-shadow: 0 0px 20px oklch(0 0 0 / 0.2);
+}
+
+.text-footer {
+  color: oklch(0.65 0.2 300);
+  text-shadow: 0 0px 8px oklch(0 0 0 / 0.2);
+}
+
+/* Debug HUD */
+
 .dev-hud {
   position: absolute;
   top: 1rem;
@@ -183,13 +195,13 @@ canvas {
   min-width: 180px;
   padding: 0.75rem 1rem;
 
-  background: rgba(0, 0, 0, 0.65);
+  background: oklch(0 0 0 / 0.65);
   backdrop-filter: blur(6px);
 
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid oklch(1 0 0 / 0.1);
   border-radius: 8px;
 
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 25px oklch(0 0 0 / 0.6);
 
   font-size: 0.85rem;
   pointer-events: none; /* doesn't interfere with gameplay */
@@ -244,13 +256,13 @@ canvas {
   font-size: 0.75rem;
   letter-spacing: 0.15em;
   opacity: 0.6;
-  color: white;
+  color: oklch(1 0 0);
 }
 
 .score-value {
   font-size: 1.5rem;
   font-weight: 600;
-  color: white;
+  color: oklch(1 0 0);
 }
 
 /* Preview canvas - purely for the "Next Piece" preview */
@@ -268,14 +280,14 @@ canvas {
   font-size: 0.75rem;
   letter-spacing: 0.15em;
   opacity: 0.6;
-  color: white;
+  color: oklch(1 0 0);
 }
 
 #previewCanvas {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: oklch(0 0 0 / 0.15);
+  border: 1px solid oklch(1 0 0 / 0.15);
   border-radius: 4px;
-  box-shadow: 0 0 10px oklch(1 0 0 / 0.1);
+  box-shadow: 0 0 10px oklch(0.6 0.16 272 / 0.3);
   max-inline-size: none;
 }
 
@@ -299,43 +311,47 @@ canvas {
   transition:
     opacity 0.3s,
     visibility 0.3s;
-}
 
-.start-screen.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
+  &.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
 
-.start-screen .prompt {
-  font-size: 2rem;
-  color: white;
-  margin: 0;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  & .prompt {
+    font-size: 2.5rem;
+    color: white;
+    margin: 0;
+    text-shadow: 0 0px 20px oklch(0.6 0.16 272 / 0.8);
+  }
 }
 
 .start-button {
   padding: 1rem 3rem;
   font-size: 1.25rem;
   color: white;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(
+    135deg,
+    oklch(0.6 0.16 272) 0%,
+    oklch(0.5 0.14 300) 100%
+  );
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px oklch(0.6 0.16 272 / 0.4);
   transition:
     transform 0.2s,
     box-shadow 0.2s;
-}
 
-.start-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-}
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px oklch(0.6 0.16 272 / 0.6);
+  }
 
-.start-button:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px oklch(0.6 0.16 272 / 0.4);
+  }
 }
 
 .controls-hint {
@@ -343,8 +359,15 @@ canvas {
   text-align: center;
   font-size: 0.9rem;
   line-height: 1.6;
-}
 
-.controls-hint p {
-  margin: 0.25rem 0;
+  & p {
+    &.action {
+      color: oklch(1 0.16 272 / 0.6);
+    }
+
+    &.inputs {
+      color: oklch(1 0 0);
+      margin-bottom: 0.75rem;
+    }
+  }
 }

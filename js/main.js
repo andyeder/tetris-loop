@@ -2,6 +2,7 @@ import { initGame, updateGame } from './game.js';
 import { FIXED_DT, MAX_FRAME_TIME } from './constants.js';
 import { render } from './renderer.js';
 import { updateDebugHUD } from './debug.js';
+import { initAudio } from './audio.js';
 
 let lastTime = performance.now() / 1000;
 let accumulator = 0;
@@ -58,6 +59,7 @@ document.getElementById('startButton').addEventListener('click', () => {
   const startScreen = document.getElementById('startScreen');
   startScreen.classList.add('hidden');
 
+  initAudio();
   initGame();
   gameStarted = true;
 });

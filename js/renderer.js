@@ -112,21 +112,23 @@ function drawGameHUD() {
 
 function drawGameOver() {
   // Darken the board
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // "GAME OVER" text
   ctx.fillStyle = 'white';
-  ctx.font = `bold ${CELLSIZE}px "Changa One", sans-serif`;
+  ctx.font = `${CELLSIZE}px "Changa One", sans-serif`;
   ctx.textAlign = 'center';
   ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - CELLSIZE);
 
   // Final score
   ctx.font = `${CELLSIZE * 0.6}px "Poppins", sans-serif`;
+  ctx.fillText('Score', canvas.width / 2, canvas.height / 2 + CELLSIZE * 0.25);
+  ctx.font = `${CELLSIZE * 0.85}px "Poppins", sans-serif`;
   ctx.fillText(
-    `Score: ${gameState.score.toLocaleString()}`,
+    gameState.score.toLocaleString(),
     canvas.width / 2,
-    canvas.height / 2 + CELLSIZE * 0.25,
+    canvas.height / 2 + CELLSIZE * 1.25,
   );
 }
 

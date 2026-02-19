@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
-    <h1 class="changa-one-regular">TETRIS BASICS</h1>
+    <h1 class="changa-one-regular text-header">TETRIS, BASICALLY</h1>
 
     <main class="game-container">
       <canvas id="canvas"></canvas>
@@ -26,10 +26,20 @@
           START GAME
         </button>
         <div class="controls-hint poppins-light">
-          <p>← → Move</p>
-          <p>↓ Soft Drop</p>
-          <p>Space Hard Drop</p>
-          <p>Z Rotate Left | X Rotate Right</p>
+          <p class="action">Move Left and Right</p>
+          <p class="inputs">Arrow Key Left | Right</p>
+
+          <p class="action">Soft Drop</p>
+          <p class="inputs">Arrow Key Down</p>
+
+          <p class="action">Hard Drop</p>
+          <p class="inputs">Space Bar</p>
+
+          <p class="action">Rotate Left and Right</p>
+          <p class="inputs">Z | X</p>
+
+          <p class="action">Debug Stats</p>
+          <p class="inputs">~ (Tilde)</p>
         </div>
       </div>
 
@@ -56,7 +66,9 @@
       </aside>
     </main>
 
-    <div class="poppins-regular">Work-in-progress</div>
+    <div class="poppins-regular text-footer">
+      "TGJG made me do this" Edition
+    </div>
 
     <!-- DEBUG HUD -->
     <aside class="dev-hud poppins-regular hidden" id="devHud">

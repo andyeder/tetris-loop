@@ -29,10 +29,10 @@ Nothing special - just the following:
 - Game over detection
 - Increase drop speed as level increases
 - "Next piece" preview
+- Added sounds effects / music
 
 ## TODO List
 
-- Nice to have - sounds effects / music
 - Nice to have - make mobile friendly
 
 ## Controls

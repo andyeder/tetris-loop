@@ -18,6 +18,7 @@ import {
 } from './piece.js';
 import { moveState, rotationState, inputState, initInput } from './input.js';
 import { getDropInterval } from './utils.js';
+import { playAudio, playMusic, stopMusic } from './audio.js';
 
 let dropTimer = 0;
 let wasSoftDropping = false; // to track whether or not user was "soft-dropping"
@@ -46,6 +47,7 @@ export function initGame() {
 
   initInput();
   spawnPiece();
+  playMusic('musGameplay');
 }
 
 // --------------------------------------------------
@@ -70,6 +72,10 @@ function isGameOver() {
 // Handle game over
 function handleGameOver() {
   gameState.isGameOver = true;
+
+  stopMusic('musGameplay');
+  playAudio('sndGameOver');
+
   console.log('Game over! Final score:', gameState.score);
 }
 
@@ -77,12 +83,21 @@ function handleGameOver() {
 // Score / level update - work-in-progress
 // --------------------------------------------------
 function updateScore(lines) {
+  const prevLevel = gameState.level;
+
   // Standard Tetris scoring - multiplied by current level
   gameState.score += SCORING_TABLE[lines] * gameState.level;
   // Track total lines cleared
   gameState.linesCleared += lines;
   // Level up every LINES_PER_LEVELUP lines
   gameState.level = Math.floor(gameState.linesCleared / LINES_PER_LEVELUP) + 1;
+
+  // Line(s) cleared or Level up sound
+  if (gameState.level > prevLevel) {
+    playAudio('sndLevelUp');
+  } else {
+    playAudio(`sndLineClear${lines === 4 ? '4' : ''}`);
+  }
 }
 
 // --------------------------------------------------
@@ -134,6 +149,7 @@ function tryLateralMove(dx) {
   if (!collides(piece.x + dx, piece.y)) {
     piece.x += dx;
     lockTimer = 0; // IMPORTANT: reset lock timer when free moving (no collision)
+    playAudio('sndMove');
   }
 }
 
@@ -174,12 +190,18 @@ function handleRotation(dir, dt) {
 }
 
 function tryRotate(dir) {
+  let didRotate = false;
+
   if (dir === 'antiClockwise') {
-    rotatePieceAntiClockwise();
+    didRotate = rotatePieceAntiClockwise();
   }
 
   if (dir === 'clockwise') {
-    rotatePieceClockwise();
+    didRotate = rotatePieceClockwise();
+  }
+
+  if (didRotate) {
+    playAudio('sndRotate');
   }
 }
 
