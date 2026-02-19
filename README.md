@@ -40,3 +40,11 @@ You can play it online [here](https://andyeder.uk/tetris).
 
 - Nice to have - user-defined controls
 - Nice to have - mobile friendly :)
+
+## Developer Notes
+
+Firstly, _this is my own interpretation_ of a Tetris-like game! I'm not making any claims as to the accuracy of this implementation; it was purely for fun (having not written a Tetris game for probably 20 years or more!) There are likely bugs, things I have done wrong, things I can most certainly improve. Every day is a learning opportunity.
+
+Secondly, I have loosely split the project into modules rather than bundling everything into one single, large JS file. The relevant modules are simply imported as needed. I'm probably not going to spend much more time tidying it up as I would hope that the code and naming conventions are fairly self-explanatory!
+
+Please feel free to use the code as you wish and drop me a message if you find it useful or interesting.
