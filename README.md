@@ -48,3 +48,7 @@ Firstly, _this is my own interpretation_ of a Tetris-like game! I'm not making a
 Secondly, I have loosely split the project into modules rather than bundling everything into one single, large JS file. The relevant modules are simply imported as needed. I'm probably not going to spend much more time tidying it up as I would hope that the code and naming conventions are fairly self-explanatory!
 
 Please feel free to use the code as you wish and drop me a message if you find it useful or interesting.
+
+## Credits
+
+Sounds effects and music from [pixabay](https://pixabay.com/sound-effects/).
