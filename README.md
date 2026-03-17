@@ -14,6 +14,7 @@ You can play it online [here](https://andyeder.uk/tetris).
 | Rotate Left and Right | Z and X              |
 | Soft Drop             | Arrow Down           |
 | Hard Drop             | Space Bar            |
+| Debug Stats           | ~ (whilst playing)   |
 | Hard Restart :)       | F5                   |
 
 ## Tech Stack
