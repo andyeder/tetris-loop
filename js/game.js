@@ -16,7 +16,14 @@ import {
   rotatePieceAntiClockwise,
   updateVisibility,
 } from './piece.js';
-import { moveState, rotationState, inputState, initInput } from './input.js';
+import {
+  moveState,
+  rotationState,
+  inputState,
+  initInput,
+  resetInputStates,
+} from './input.js';
+import { resetBoard } from './board.js';
 import { getDropInterval } from './utils.js';
 import { playAudio, playMusic, stopMusic } from './audio.js';
 
@@ -40,6 +47,8 @@ function resetGame() {
   gameState.linesCleared = 0;
   gameState.isGameOver = false;
   gameState.hasStarted = true;
+  // Reset input states
+  resetInputStates();
 }
 
 export function initGame() {
@@ -48,6 +57,19 @@ export function initGame() {
   initInput();
   spawnPiece();
   playMusic('musGameplay');
+}
+
+export function restartGame() {
+  resetGame();
+
+  // Reset timers
+  dropTimer = 0;
+  lockTimer = 0;
+  wasSoftDropping = false;
+
+  // Reset board and spawn fresh piece
+  resetBoard();
+  spawnPiece();
 }
 
 // --------------------------------------------------

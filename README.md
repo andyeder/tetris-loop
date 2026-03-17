@@ -8,12 +8,13 @@ You can play it online [here](https://andyeder.uk/tetris).
 
 ## Game Controls
 
-| **Action**            | **Key**                |
-| :-------------------- | :--------------------- |
-| Left and Right        | Arrow Left and Right   |
-| Soft / Hard Drop      | Arrow Down / Space Bar |
-| Rotate Left and Right | Z and X                |
-| Restart :)            | F5                     |
+| **Action**            | **Key**              |
+| :-------------------- | :------------------- |
+| Left and Right        | Arrow Left and Right |
+| Rotate Left and Right | Z and X              |
+| Soft Drop             | Arrow Down           |
+| Hard Drop             | Space Bar            |
+| Hard Restart :)       | F5                   |
 
 ## Tech Stack
 

@@ -53,3 +53,20 @@ export function initInput() {
     if (e.code === 'KeyX') rotationState.clockwise.held = false;
   });
 }
+
+export function resetInputStates() {
+  inputState.hardDropRequested = false;
+  inputState.down = false;
+  moveState.left.held = false;
+  moveState.left.time = 0;
+  moveState.left.repeat = 0;
+  moveState.right.held = false;
+  moveState.right.time = 0;
+  moveState.right.repeat = 0;
+  rotationState.antiClockwise.held = false;
+  rotationState.antiClockwise.time = 0;
+  rotationState.antiClockwise.repeat = 0;
+  rotationState.clockwise.held = false;
+  rotationState.clockwise.time = 0;
+  rotationState.clockwise.repeat = 0;
+}

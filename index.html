@@ -56,6 +56,25 @@
         </div>
       </div>
 
+      <!-- Game over overlay -->
+      <div class="game-over-screen hidden" id="gameOverScreen">
+        <div class="changa-one-regular game-over-title">GAME OVER</div>
+        <div class="game-over-score-block">
+          <div class="score-label poppins-light">FINAL SCORE</div>
+          <div class="game-over-score-value changa-one-regular" id="finalScore">
+            0
+          </div>
+        </div>
+        <div class="game-over-buttons">
+          <button id="playAgainButton" class="start-button poppins-semibold">
+            PLAY AGAIN
+          </button>
+          <button id="mainMenuButton" class="menu-button poppins-semibold">
+            MAIN MENU
+          </button>
+        </div>
+      </div>
+
       <!-- "Next piece preview" canvas - easier to do this than work around single canvas clipping issues... -->
       <div class="preview-container">
         <div class="preview-label poppins-light">NEXT</div>
@@ -80,7 +99,10 @@
     </main>
 
     <div class="poppins-regular text-footer">
-      "TGJG made me do this" Edition
+      Source code on
+      <a href="https://github.com/andyeder/tetris-loop" target="_blank"
+        >GitHub</a
+      >
     </div>
 
     <!-- DEBUG HUD -->

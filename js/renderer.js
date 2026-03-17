@@ -204,9 +204,20 @@ export function render() {
   // Draw "next piece preview"
   drawNextPiecePreview();
 
-  // Draw game over overlay (if applicable)
-  if (gameState.isGameOver) {
-    drawGameOver();
+  // Show/hide game over DOM overlay
+  const gameOverScreen = document.getElementById('gameOverScreen');
+  if (gameOverScreen) {
+    if (gameState.isGameOver) {
+      gameOverScreen.classList.remove('hidden');
+
+      // Update final score display
+      const finalScore = document.getElementById('finalScore');
+      if (finalScore) {
+        finalScore.textContent = gameState.score.toLocaleString();
+      }
+    } else {
+      gameOverScreen.classList.add('hidden');
+    }
   }
 
   // Draw the game HUD

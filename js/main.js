@@ -1,9 +1,10 @@
-import { initGame, updateGame } from './game.js';
+import { initGame, updateGame, restartGame } from './game.js';
 import { FIXED_DT, MAX_FRAME_TIME } from './constants.js';
 import { render } from './renderer.js';
 import { updateDebugHUD } from './debug.js';
 import {
   initAudio,
+  playMusic,
   setSfxEnabled,
   setMusicEnabled,
   loadSfxEnabled,
@@ -70,6 +71,26 @@ document.getElementById('startButton').addEventListener('click', () => {
   initAudio();
   initGame();
   gameStarted = true;
+});
+
+// Game Over - Play Again button handler
+document.getElementById('playAgainButton').addEventListener('click', () => {
+  document.getElementById('gameOverScreen').classList.add('hidden');
+  restartGame();
+  playMusic('musGameplay');
+  gameStarted = true;
+});
+
+// Game Over - Main Menu button handler
+document.getElementById('mainMenuButton').addEventListener('click', () => {
+  // restartGame() resets gameState.isGameOver to false, which prevents
+  // the renderer from immediately re-showing the game-over overlay each frame.
+  //  - keep gameStarted = false so gameplay doesn't begin until Start is clicked.
+  restartGame();
+  gameStarted = false;
+
+  document.getElementById('gameOverScreen').classList.add('hidden');
+  document.getElementById('startScreen').classList.remove('hidden');
 });
 
 // Load audio settings from localStorage
