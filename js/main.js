@@ -2,6 +2,7 @@ import { initGame, updateGame, restartGame } from './game.js';
 import { FIXED_DT, MAX_FRAME_TIME } from './constants.js';
 import { render } from './renderer.js';
 import { updateDebugHUD } from './debug.js';
+import { initInput } from './input.js';
 import { initTouchInput } from './touch.js';
 import {
   initAudio,
@@ -116,11 +117,17 @@ musicCheckbox.addEventListener('change', (e) => {
   saveMusicEnabled(enabled);
 });
 
-// Wire up the on-screen touch controls.
-//  - bound once here rather than from initGame(), which re-runs on
-//    every replay. The buttons are always bound, including on
-//    desktop, but CSS hides the bar for fine pointers so they can
-//    never be pressed.
+// Wire up input once, at startup.
+//  - not from initGame(), which only runs when a game begins and
+//    re-runs on every replay. Binding here means the keyboard is
+//    live on the start screen too, so the debug toggle works before
+//    the first game rather than only after it.
+//  - gameplay keys set flags that nothing reads until gameStarted,
+//    and resetGame() clears them as each game begins.
+initInput();
+
+// The touch buttons are always bound, including on desktop, but CSS
+// hides the bar for fine pointers so they can never be pressed.
 initTouchInput();
 
 // Kick things off!

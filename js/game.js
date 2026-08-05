@@ -20,7 +20,6 @@ import {
   moveState,
   rotationState,
   inputState,
-  initInput,
   resetInputStates,
 } from './input.js';
 import { resetBoard } from './board.js';
@@ -54,7 +53,9 @@ function resetGame() {
 export function initGame() {
   resetGame();
 
-  initInput();
+  // Input listeners are bound once at startup in main.js, not here -
+  // this runs only when a game begins, which left the keyboard dead
+  // on the start screen.
   spawnPiece();
   playMusic('musGameplay');
 }
