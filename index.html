@@ -24,61 +24,69 @@
     <h1 class="changa-one-regular text-header">TETRIS, BASICALLY</h1>
 
     <main class="game-container">
-      <canvas id="canvas"></canvas>
+      <!-- The board and anything that must sit exactly on top of it.
+           Overlays below are positioned against this wrapper, so they
+           track the board rather than the whole layout. -->
+      <div class="board-stage">
+        <canvas id="canvas"></canvas>
 
-      <!-- Start screen overlay -->
-      <div class="start-screen" id="startScreen">
-        <div class="changa-one-regular prompt">READY?</div>
+        <!-- Start screen overlay -->
+        <div class="start-screen" id="startScreen">
+          <div class="changa-one-regular prompt">READY?</div>
 
-        <!-- Start button -->
-        <button id="startButton" class="start-button poppins-semibold">
-          START GAME
-        </button>
+          <!-- Start button -->
+          <button id="startButton" class="start-button poppins-semibold">
+            START GAME
+          </button>
 
-        <!-- Player controls -->
-        <div class="controls-hint poppins-light">
-          <p class="action">Move Left and Right</p>
-          <p class="inputs">Arrow Left and Arrow Right</p>
+          <!-- Player controls -->
+          <div class="controls-hint poppins-light">
+            <p class="action">Move Left and Right</p>
+            <p class="inputs">Arrow Left and Arrow Right</p>
 
-          <p class="action">Soft Drop / Hard Drop</p>
-          <p class="inputs">Arrow Down / Space Bar</p>
+            <p class="action">Soft Drop / Hard Drop</p>
+            <p class="inputs">Arrow Down / Space Bar</p>
 
-          <p class="action">Rotate Left and Right</p>
-          <p class="inputs">Z and X</p>
+            <p class="action">Rotate Left and Right</p>
+            <p class="inputs">Z and X</p>
 
-          <p class="action">Debug Stats</p>
-          <p class="inputs">~ (Tilde)</p>
-        </div>
+            <p class="action">Debug Stats</p>
+            <p class="inputs">~ (Tilde)</p>
+          </div>
 
-        <!-- Audio settings -->
-        <div class="audio-settings poppins-regular">
-          <label class="audio-toggle">
-            <input type="checkbox" id="toggleSfx" checked />
-            <span>Sound FX</span>
-          </label>
-          <label class="audio-toggle">
-            <input type="checkbox" id="toggleMusic" checked />
-            <span>Music</span>
-          </label>
-        </div>
-      </div>
-
-      <!-- Game over overlay -->
-      <div class="game-over-screen hidden" id="gameOverScreen">
-        <div class="changa-one-regular game-over-title">GAME OVER</div>
-        <div class="game-over-score-block">
-          <div class="score-label poppins-light">FINAL SCORE</div>
-          <div class="game-over-score-value changa-one-regular" id="finalScore">
-            0
+          <!-- Audio settings -->
+          <div class="audio-settings poppins-regular">
+            <label class="audio-toggle">
+              <input type="checkbox" id="toggleSfx" checked />
+              <span>Sound FX</span>
+            </label>
+            <label class="audio-toggle">
+              <input type="checkbox" id="toggleMusic" checked />
+              <span>Music</span>
+            </label>
           </div>
         </div>
-        <div class="game-over-buttons">
-          <button id="playAgainButton" class="start-button poppins-semibold">
-            PLAY AGAIN
-          </button>
-          <button id="mainMenuButton" class="menu-button poppins-semibold">
-            MAIN MENU
-          </button>
+
+        <!-- Game over overlay -->
+        <div class="game-over-screen hidden" id="gameOverScreen">
+          <div class="changa-one-regular game-over-title">GAME OVER</div>
+          <div class="game-over-score-block">
+            <div class="score-label poppins-light">FINAL SCORE</div>
+            <div
+              class="game-over-score-value changa-one-regular"
+              id="finalScore"
+            >
+              0
+            </div>
+          </div>
+          <div class="game-over-buttons">
+            <button id="playAgainButton" class="start-button poppins-semibold">
+              PLAY AGAIN
+            </button>
+            <button id="mainMenuButton" class="menu-button poppins-semibold">
+              MAIN MENU
+            </button>
+          </div>
         </div>
       </div>
 

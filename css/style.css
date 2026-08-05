@@ -182,11 +182,32 @@
  * LAYOUT
  * ================================================== */
 @layer layout {
+  /* --------------------------------------------------
+   * Board + side rail.
+   *
+   * The board spans both rows; the rail splits into a
+   * 1fr row (score HUD, pinned to the top) and an auto
+   * row (next-piece preview, which therefore sits at the
+   * bottom). That reproduces the previous absolutely
+   * positioned rail, but as real layout that can reflow.
+   * -------------------------------------------------- */
   .game-container {
-    position: relative; /* important for overlay positioning */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    grid-template-areas:
+      'board hud'
+      'board next';
+    grid-template-columns: auto auto;
+    grid-template-rows: 1fr auto;
+    column-gap: var(--chrome-gap);
+  }
+
+  /* Containing block for the start / game-over overlays.
+     Sized by the canvas alone, so `inset: 0` overlays always
+     cover the board exactly - never the surrounding chrome. */
+  .board-stage {
+    grid-area: board;
+    position: relative;
+    justify-self: center;
   }
 }
 
@@ -261,9 +282,7 @@
   /* Game score, etc. HUD */
 
   .score-hud {
-    position: absolute;
-    left: calc(100% + 1.5rem);
-    top: 0;
+    grid-area: hud;
 
     display: flex;
     flex-direction: column;
@@ -294,9 +313,7 @@
   /* Preview canvas - purely for the "Next Piece" preview */
 
   .preview-container {
-    position: absolute;
-    left: calc(100% + 1rem);
-    bottom: 0;
+    grid-area: next;
 
     display: flex;
     flex-direction: column;
@@ -599,5 +616,51 @@
    * -------------------------------------------------- */
   #canvas {
     max-block-size: calc(100svh - var(--page-chrome-height));
+  }
+
+  /* --------------------------------------------------
+   * Stacked layout
+   *
+   * Triggered on available width, not device class. The
+   * side-by-side layout needs roughly board (320px max)
+   * + gap + rail (120px min), so it stops fitting a little
+   * under 34rem. Wide phones and tablets keep the rail.
+   * -------------------------------------------------- */
+  @media (width < 34rem) {
+    :root {
+      /* Now also covering the HUD row above the board */
+      --page-chrome-height: 14rem;
+    }
+
+    .game-container {
+      grid-template-areas:
+        'hud next'
+        'board board';
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+      row-gap: 0.75rem;
+    }
+
+    /* Score blocks run across the top instead of down the side.
+       min-width has to go, or three 120px blocks overflow a
+       board that is only ~300px wide. */
+    .score-hud {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 0.75rem;
+      min-width: 0;
+    }
+
+    .preview-container {
+      align-items: flex-end;
+      gap: 0.25rem;
+    }
+
+    /* Shrink the preview so the top row stays compact.
+       Backing store is untouched - this only scales display. */
+    #previewCanvas {
+      max-block-size: 3rem;
+    }
   }
 }
