@@ -138,29 +138,22 @@
  * ================================================== */
 @layer base {
   :root {
-    /* ----------------------------------------------
-     * Board geometry
-     *
-     * These MUST stay in sync with js/constants.js:
-     *   --board-cols  <-> COLS      (10)
-     *   --board-rows  <-> ROWS      (20)
-     *   --cell-size   <-> CELLSIZE  (32)
-     *
-     * The canvas backing store is sized in JS from
-     * those constants; these tokens describe the same
-     * board to CSS so it can be scaled for display
-     * without the two ever disagreeing.
-     * ---------------------------------------------- */
-    --board-cols: 10;
-    --board-rows: 20;
-    --cell-size: 32px;
-
-    /* Intrinsic (unscaled) board size - 320px x 640px */
-    --board-width: calc(var(--board-cols) * var(--cell-size));
-    --board-height: calc(var(--board-rows) * var(--cell-size));
-
     /* Spacing between the board and the surrounding chrome */
     --chrome-gap: 1.5rem;
+
+    /* ----------------------------------------------
+     * Vertical space reserved for everything that is
+     * NOT the board - the header, the footer, and the
+     * gaps between them. The board is capped to
+     * whatever height is left over.
+     *
+     * This is the single tuning point for board size.
+     * Deliberately generous for now: stage 3's fluid
+     * type will let it tighten, and the portrait
+     * layout in stage 2 will need to raise it to make
+     * room for the relocated HUD.
+     * ---------------------------------------------- */
+    --page-chrome-height: 9rem;
   }
 
   body {
@@ -582,10 +575,29 @@
 
 /* ==================================================
  * RESPONSIVE
- *
- * Deliberately empty for now - board scaling (stage 1),
- * HUD reflow (stage 2) and overlay/type scaling (stage 3)
- * all land here.
  * ================================================== */
 @layer responsive {
+  /* --------------------------------------------------
+   * Fluid board scaling
+   *
+   * The canvas already knows how big the board is: its
+   * width/height attributes are set in js/renderer.js from
+   * the constants in js/constants.js, which gives it both an
+   * intrinsic size and an intrinsic aspect ratio - exactly
+   * like an <img>.
+   *
+   * So CSS never restates those numbers, it only constrains.
+   * Capping the block size shrinks the inline size to match,
+   * because the reset leaves inline-size as auto. On tall
+   * viewports the calc() exceeds the native 640px and nothing
+   * happens - max-block-size can only shrink, never grow.
+   *
+   * The reset's max-inline-size: 100% covers the narrow-viewport
+   * case by the same mechanism. Whichever binds first wins.
+   *
+   * #canvas, not canvas - #previewCanvas must not scale.
+   * -------------------------------------------------- */
+  #canvas {
+    max-block-size: calc(100svh - var(--page-chrome-height));
+  }
 }
