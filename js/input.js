@@ -26,7 +26,16 @@ export const rotationState = {
   clockwise: { held: false, time: 0, repeat: 0 },
 };
 
+let initialised = false;
+
 export function initInput() {
+  // initGame() runs again every time the player returns to the menu
+  // and starts a new game, so guard against stacking up duplicate
+  // listeners on each replay.
+  if (initialised) {
+    return;
+  }
+
   window.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft') moveState.left.held = true;
     if (e.key === 'ArrowRight') moveState.right.held = true;
@@ -52,6 +61,20 @@ export function initInput() {
     if (e.code === 'KeyZ') rotationState.antiClockwise.held = false;
     if (e.code === 'KeyX') rotationState.clockwise.held = false;
   });
+
+  // A press that gets interrupted never delivers its keyup or
+  // pointerup - alt-tab on desktop, an incoming call or a
+  // notification on a phone. Without this the direction stays
+  // held down and the piece slams into the wall on return.
+  window.addEventListener('blur', resetInputStates);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      resetInputStates();
+    }
+  });
+
+  initialised = true;
 }
 
 export function resetInputStates() {

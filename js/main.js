@@ -2,6 +2,7 @@ import { initGame, updateGame, restartGame } from './game.js';
 import { FIXED_DT, MAX_FRAME_TIME } from './constants.js';
 import { render } from './renderer.js';
 import { updateDebugHUD } from './debug.js';
+import { initTouchInput } from './touch.js';
 import {
   initAudio,
   playMusic,
@@ -114,6 +115,13 @@ musicCheckbox.addEventListener('change', (e) => {
   setMusicEnabled(enabled);
   saveMusicEnabled(enabled);
 });
+
+// Wire up the on-screen touch controls.
+//  - bound once here rather than from initGame(), which re-runs on
+//    every replay. The buttons are always bound, including on
+//    desktop, but CSS hides the bar for fine pointers so they can
+//    never be pressed.
+initTouchInput();
 
 // Kick things off!
 requestAnimationFrame(frame);

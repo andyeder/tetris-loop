@@ -39,8 +39,9 @@
             START GAME
           </button>
 
-          <!-- Player controls -->
-          <div class="controls-hint poppins-light">
+          <!-- Player controls - one variant per input type, only
+               ever one of them shown (see the responsive layer) -->
+          <div class="controls-hint controls-hint--keyboard poppins-light">
             <p class="action">Move Left and Right</p>
             <p class="inputs">Arrow Left and Arrow Right</p>
 
@@ -52,6 +53,17 @@
 
             <p class="action">Debug Stats</p>
             <p class="inputs">~ (Tilde)</p>
+          </div>
+
+          <div class="controls-hint controls-hint--touch poppins-light">
+            <p class="action">Move Left and Right</p>
+            <p class="inputs">&#9664; and &#9654;</p>
+
+            <p class="action">Soft Drop / Hard Drop</p>
+            <p class="inputs">&#9660; / &#10515;</p>
+
+            <p class="action">Rotate Left and Right</p>
+            <p class="inputs">&#8634; and &#8635;</p>
           </div>
 
           <!-- Audio settings -->
@@ -111,6 +123,60 @@
           <div class="score-value" id="lines">0</div>
         </div>
       </aside>
+
+      <!-- On-screen controls - hidden unless the primary pointer is
+           coarse. Bound by data-control in js/touch.js, so this can
+           be rearranged without touching the JS. -->
+      <div class="touch-controls" id="touchControls">
+        <button
+          type="button"
+          class="touch-button"
+          data-control="rotateLeft"
+          aria-label="Rotate left"
+        >
+          &#8634;
+        </button>
+        <button
+          type="button"
+          class="touch-button"
+          data-control="hardDrop"
+          aria-label="Hard drop"
+        >
+          &#10515;
+        </button>
+        <button
+          type="button"
+          class="touch-button"
+          data-control="rotateRight"
+          aria-label="Rotate right"
+        >
+          &#8635;
+        </button>
+        <button
+          type="button"
+          class="touch-button"
+          data-control="left"
+          aria-label="Move left"
+        >
+          &#9664;
+        </button>
+        <button
+          type="button"
+          class="touch-button"
+          data-control="softDrop"
+          aria-label="Soft drop"
+        >
+          &#9660;
+        </button>
+        <button
+          type="button"
+          class="touch-button"
+          data-control="right"
+          aria-label="Move right"
+        >
+          &#9654;
+        </button>
+      </div>
     </main>
 
     <div class="poppins-regular text-footer">

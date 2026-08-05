@@ -154,6 +154,11 @@
      * room for the relocated HUD.
      * ---------------------------------------------- */
     --page-chrome-height: 9rem;
+
+    /* Height of the on-screen control bar. Zero unless the
+       responsive layer turns the controls on, so the board
+       budget below composes from two independent knobs. */
+    --touch-controls-height: 0rem;
   }
 
   body {
@@ -195,9 +200,10 @@
     display: grid;
     grid-template-areas:
       'board hud'
-      'board next';
+      'board next'
+      'controls controls';
     grid-template-columns: auto auto;
-    grid-template-rows: 1fr auto;
+    grid-template-rows: 1fr auto auto;
     column-gap: var(--chrome-gap);
   }
 
@@ -448,6 +454,59 @@
     }
   }
 
+  /* Only one hint variant is ever shown - the responsive layer
+     swaps them over for coarse pointers. */
+  .controls-hint--touch {
+    display: none;
+  }
+
+  /* --------------------------------------------------
+   * On-screen touch controls
+   *
+   * Two rows of three:
+   *   rotate left | hard drop  | rotate right
+   *   move left   | soft drop  | move right
+   * -------------------------------------------------- */
+
+  .touch-controls {
+    grid-area: controls;
+
+    /* Switched to grid by the responsive layer for coarse pointers */
+    display: none;
+
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+
+    margin-block-start: 0.75rem;
+  }
+
+  .touch-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-block-size: clamp(2.75rem, 9vw, 3.5rem);
+    font-size: clamp(1.1rem, 5vw, 1.4rem);
+    line-height: 1;
+
+    color: oklch(1 0 0);
+    background: oklch(1 0 0 / 0.08);
+    border: 1px solid oklch(1 0 0 / 0.15);
+    border-radius: 8px;
+
+    /* Game inputs, not page gestures - no double-tap zoom, no pan */
+    touch-action: none;
+
+    transition: background 0.1s;
+
+    /* Driven from js/touch.js rather than :active, which is
+       unreliable once the pointer has been captured. */
+    &.is-pressed {
+      background: oklch(0.6 0.16 272 / 0.55);
+      border-color: oklch(0.6 0.16 272);
+    }
+  }
+
   /* Game over screen contents */
 
   .game-over-title {
@@ -621,7 +680,9 @@
    * #canvas, not canvas - #previewCanvas must not scale.
    * -------------------------------------------------- */
   #canvas {
-    max-block-size: calc(100svh - var(--page-chrome-height));
+    max-block-size: calc(
+      100svh - var(--page-chrome-height) - var(--touch-controls-height)
+    );
   }
 
   /* --------------------------------------------------
@@ -646,9 +707,10 @@
     .game-container {
       grid-template-areas:
         'hud next'
-        'board board';
+        'board board'
+        'controls controls';
       grid-template-columns: 1fr auto;
-      grid-template-rows: auto auto;
+      grid-template-rows: auto auto auto;
       row-gap: 0.75rem;
     }
 
@@ -672,6 +734,44 @@
        Backing store is untouched - this only scales display. */
     #previewCanvas {
       max-block-size: 3rem;
+    }
+  }
+
+  /* --------------------------------------------------
+   * Touch devices
+   *
+   * Keyed on pointer type rather than width: a phone in
+   * landscape still needs the controls, and a narrow desktop
+   * window still does not.
+   * -------------------------------------------------- */
+  @media (pointer: coarse) {
+    :root {
+      /* Two button rows plus the gap above them. Claimed back
+         from the board by the max-block-size rule above. */
+      --touch-controls-height: 7rem;
+    }
+
+    .touch-controls {
+      display: grid;
+    }
+
+    /* Swap the keyboard hints for the on-screen ones */
+    .controls-hint--keyboard {
+      display: none;
+    }
+
+    .controls-hint--touch {
+      display: block;
+    }
+
+    /* The board is a game surface, not a scrollable page area */
+    #canvas {
+      touch-action: none;
+    }
+
+    /* No pull-to-refresh or bounce while playing */
+    body {
+      overscroll-behavior: none;
     }
   }
 }
