@@ -1,5 +1,64 @@
 import { FIXED_DT, SIMULATION_RATE_HZ } from './constants.js';
 
+// --------------------------------------------------
+// Debug HUD availability
+//
+// Debug mode needs room it does not have on a phone: the panel
+// sits over the board, and turning it on also reveals the spawn
+// buffer rows, which makes the board taller and squeezes it again.
+//
+// So it is offered only where there is space, keyed to the same
+// breakpoint the stacked layout uses in css/style.css. Owning both
+// the availability test and the toggle here keeps the renderer and
+// the input handler from drifting apart on what "debug" means.
+// --------------------------------------------------
+const debugViewport = window.matchMedia('(width >= 34rem)');
+
+function getHud() {
+  return document.getElementById('devHud');
+}
+
+export function isDebugAvailable() {
+  return debugViewport.matches;
+}
+
+// True only when the HUD is genuinely on screen. The renderer asks
+// this before drawing the buffer rows, so both halves of debug mode
+// switch together.
+export function isDebugMode() {
+  if (!isDebugAvailable()) {
+    return false;
+  }
+
+  const hud = getHud();
+
+  return hud !== null && !hud.classList.contains('hidden');
+}
+
+export function toggleDebugHUD() {
+  if (!isDebugAvailable()) {
+    return;
+  }
+
+  const hud = getHud();
+
+  if (hud) {
+    hud.classList.toggle('hidden');
+  }
+}
+
+// Shrinking the window below the breakpoint while the HUD is open
+// would otherwise leave it stranded across the board.
+debugViewport.addEventListener('change', (e) => {
+  if (!e.matches) {
+    const hud = getHud();
+
+    if (hud) {
+      hud.classList.add('hidden');
+    }
+  }
+});
+
 // For debugging purposes
 const MAX_FRAME_SAMPLES = 120;
 const frameTimes = [];

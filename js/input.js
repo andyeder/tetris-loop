@@ -1,3 +1,5 @@
+import { toggleDebugHUD } from './debug.js';
+
 // --------------------------------------------------
 // Hard drop (very different to soft drop!)
 //  -> instantly moves piece as far down as possible
@@ -47,9 +49,10 @@ export function initInput() {
     if (e.code === 'KeyX') rotationState.clockwise.held = true;
 
     // Toggle DEBUG HUD
+    //  - a no-op where the screen is too small for it
     if (e.key === '~') {
       e.preventDefault();
-      document.getElementById('devHud').classList.toggle('hidden');
+      toggleDebugHUD();
     }
   });
 

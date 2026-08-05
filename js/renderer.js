@@ -3,6 +3,7 @@ import { board } from './board.js';
 import { piece } from './piece.js';
 import { gameState } from './game.js';
 import { peekNextTetromino } from './utils.js';
+import { isDebugMode } from './debug.js';
 
 const GRID_BACKGROUND_COLOUR = 'oklch(0.3 0 0)';
 const GRID_LINE_COLOUR = 'oklch(0.375 0 0)';
@@ -43,12 +44,6 @@ previewCanvas.width = Math.round(PREVIEW_SIZE * DPR);
 previewCanvas.height = Math.round(PREVIEW_SIZE * DPR);
 previewCanvas.style.height = `${PREVIEW_SIZE}px`;
 previewCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
-
-// Check if debug HUD is visible
-function isDebugMode() {
-  const debugHud = document.getElementById('devHud');
-  return debugHud && !debugHud.classList.contains('hidden');
-}
 
 // Setup canvas dimensions based on debug mode
 function updateCanvasSize() {

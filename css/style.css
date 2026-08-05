@@ -753,6 +753,16 @@
     #previewCanvas {
       max-block-size: 3rem;
     }
+
+    /* Debug mode is unavailable at this width - js/debug.js gates
+       the toggle on the same breakpoint. These two rules are the
+       belt and braces: the panel can never be stranded over the
+       board, and the start screen never advertises a key that
+       does nothing. */
+    .dev-hud,
+    .controls-hint-debug {
+      display: none;
+    }
   }
 
   /* --------------------------------------------------
