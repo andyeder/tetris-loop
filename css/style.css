@@ -805,4 +805,46 @@
       overscroll-behavior: none;
     }
   }
+
+  /* --------------------------------------------------
+   * Touch devices, landscape
+   *
+   * Height is the scarce resource here, so the controls move
+   * beside the board instead of below it, and the decorative
+   * header and footer step aside. Same 3x2 block of buttons in
+   * the same DOM order - only its position changes.
+   *
+   * Must come after the block above: it overrides both budget
+   * tokens now that nothing is stacked under the board.
+   * -------------------------------------------------- */
+  @media (pointer: coarse) and (orientation: landscape) {
+    :root {
+      --page-chrome-height: 2rem;
+      --touch-controls-height: 0rem;
+    }
+
+    .text-header,
+    .text-footer {
+      display: none;
+    }
+
+    .game-container {
+      grid-template-areas:
+        'hud board controls'
+        'next board controls';
+      grid-template-columns: auto auto auto;
+      grid-template-rows: 1fr auto;
+    }
+
+    .touch-controls {
+      align-content: center;
+      margin-block-start: 0;
+    }
+
+    /* The controls column is content-sized, so without a minimum
+       inline size the buttons collapse to the width of the glyph. */
+    .touch-button {
+      min-inline-size: clamp(2.75rem, 9vw, 3.5rem);
+    }
+  }
 }

@@ -16,11 +16,33 @@ const ctx = canvas.getContext('2d');
 const previewCanvas = document.getElementById('previewCanvas');
 const previewCtx = previewCanvas.getContext('2d');
 
+// --------------------------------------------------
+// Device pixel ratio
+//
+// A backing store sized in CSS pixels looks soft on a high-DPI
+// display. Scale it by the device ratio and scale the drawing
+// context to match, so everything below still draws in board
+// coordinates and knows nothing about DPI.
+//
+// Capped at 2 - beyond that the extra pixels cost fill rate
+// without being visible.
+//
+// Only the *height* is pinned in CSS, never the width. The board
+// scales by having its height capped while its width stays auto
+// (see the responsive layer), and setting an explicit width would
+// break that and squash the aspect ratio.
+// --------------------------------------------------
+const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
 // Setup preview canvas size (4x4 cells)
 const PREVIEW_CELL_SIZE = CELLSIZE / 2;
 const PREVIEW_CANVAS_PADDING = CELLSIZE / 2;
-previewCanvas.width = 4 * PREVIEW_CELL_SIZE + PREVIEW_CANVAS_PADDING;
-previewCanvas.height = 4 * PREVIEW_CELL_SIZE + PREVIEW_CANVAS_PADDING;
+const PREVIEW_SIZE = 4 * PREVIEW_CELL_SIZE + PREVIEW_CANVAS_PADDING;
+
+previewCanvas.width = Math.round(PREVIEW_SIZE * DPR);
+previewCanvas.height = Math.round(PREVIEW_SIZE * DPR);
+previewCanvas.style.height = `${PREVIEW_SIZE}px`;
+previewCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
 // Check if debug HUD is visible
 function isDebugMode() {
@@ -30,8 +52,27 @@ function isDebugMode() {
 
 // Setup canvas dimensions based on debug mode
 function updateCanvasSize() {
-  canvas.width = COLS * CELLSIZE;
-  canvas.height = isDebugMode() ? TOTAL_ROWS * CELLSIZE : ROWS * CELLSIZE;
+  const width = COLS * CELLSIZE;
+  const height = (isDebugMode() ? TOTAL_ROWS : ROWS) * CELLSIZE;
+
+  const backingWidth = Math.round(width * DPR);
+  const backingHeight = Math.round(height * DPR);
+
+  // Assigning width/height wipes the canvas and resets the context,
+  // transform included - so only do it when the size has actually
+  // changed, rather than on every single frame.
+  if (canvas.width === backingWidth && canvas.height === backingHeight) {
+    return;
+  }
+
+  canvas.width = backingWidth;
+  canvas.height = backingHeight;
+
+  // Pin the logical height; width stays auto so CSS can scale the
+  // board without distorting it.
+  canvas.style.height = `${height}px`;
+
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 }
 
 // Initial canvas setup
@@ -58,7 +99,8 @@ function drawNextPiecePreview() {
   }
 
   // Clear preview canvas
-  previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+  //  - in board coordinates, not backing-store pixels
+  previewCtx.clearRect(0, 0, PREVIEW_SIZE, PREVIEW_SIZE);
 
   // Calculate centering offset for the piece
   const shapeHeight = next.shape.length;
@@ -110,28 +152,6 @@ function drawGameHUD() {
   set('lines', gameState.linesCleared);
 }
 
-function drawGameOver() {
-  // Darken the board
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  // "GAME OVER" text
-  ctx.fillStyle = 'white';
-  ctx.font = `${CELLSIZE}px "Changa One", sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - CELLSIZE);
-
-  // Final score
-  ctx.font = `${CELLSIZE * 0.6}px "Poppins", sans-serif`;
-  ctx.fillText('Score', canvas.width / 2, canvas.height / 2 + CELLSIZE * 0.25);
-  ctx.font = `${CELLSIZE * 0.85}px "Poppins", sans-serif`;
-  ctx.fillText(
-    gameState.score.toLocaleString(),
-    canvas.width / 2,
-    canvas.height / 2 + CELLSIZE * 1.25,
-  );
-}
-
 export function render() {
   // Handle toggle to/from debug and display of buffer rows
   const showBufferRows = isDebugMode();
@@ -144,20 +164,24 @@ export function render() {
   const endRow = showBufferRows ? TOTAL_ROWS : TOTAL_ROWS;
   const renderHeight = showBufferRows ? TOTAL_ROWS : ROWS;
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Board coordinates, not backing-store pixels - the context is
+  // scaled by DPR, so canvas.width/height would be wrong here.
+  const boardWidth = COLS * CELLSIZE;
+
+  ctx.clearRect(0, 0, boardWidth, renderHeight * CELLSIZE);
 
   // Draw buffer zone background (only in debug mode)
   if (showBufferRows) {
     ctx.fillStyle = BUFFER_ZONE_COLOUR;
-    ctx.fillRect(0, 0, canvas.width, BUFFER_ROWS * CELLSIZE);
+    ctx.fillRect(0, 0, boardWidth, BUFFER_ROWS * CELLSIZE);
 
     // Draw visible zone background
     ctx.fillStyle = GRID_BACKGROUND_COLOUR;
-    ctx.fillRect(0, BUFFER_ROWS * CELLSIZE, canvas.width, ROWS * CELLSIZE);
+    ctx.fillRect(0, BUFFER_ROWS * CELLSIZE, boardWidth, ROWS * CELLSIZE);
   } else {
     // Draw visible zone background
     ctx.fillStyle = GRID_BACKGROUND_COLOUR;
-    ctx.fillRect(0, 0, canvas.width, ROWS * CELLSIZE);
+    ctx.fillRect(0, 0, boardWidth, ROWS * CELLSIZE);
   }
 
   // Draw grid lines (full height width buffer)
