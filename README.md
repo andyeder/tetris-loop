@@ -4,7 +4,7 @@ I started out by writing a simple Tetris-like game loop having been inspired by 
 
 However, I got a bit carried away and the result is a _pretty much_ complete version of Tetris. I have based it on guidelines for "modern" Tetris (more information provided below). Be forewarned, the game is not mobile-friendly right now... so best to run it in your preferred browser!
 
-You can play it online [here](https://andyeder.uk/tetris).
+You can play it online [here](https://andyeder.uk/tetris-loop).
 
 ## Game Controls
 
