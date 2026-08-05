@@ -217,7 +217,10 @@
 @layer components {
   /* Page header / footer */
 
+  /* Clamped so it cannot wrap to two lines on a narrow screen -
+     a wrapped header would eat into the board's height budget. */
   .text-header {
+    font-size: clamp(1.5rem, 7vw, 2rem);
     color: oklch(0.65 0.2 300);
     text-shadow: 0 0px 20px oklch(0 0 0 / 0.2);
   }
@@ -305,7 +308,7 @@
   }
 
   .score-value {
-    font-size: 1.5rem;
+    font-size: clamp(1.1rem, 4.5vw, 1.5rem);
     font-weight: 600;
     color: oklch(1 0 0);
   }
@@ -335,9 +338,21 @@
     max-inline-size: none;
   }
 
-  /* Start screen overlay related */
+  /* --------------------------------------------------
+   * Board overlays (start screen, game over)
+   *
+   * Both cover the board exactly and dismiss the same
+   * way, so everything shared lives here and only the
+   * contents differ further down.
+   * -------------------------------------------------- */
 
-  .start-screen {
+  .start-screen,
+  .game-over-screen {
+    /* Drives both the gap between rows and the inset from
+       the board edge, so the overlay breathes evenly as it
+       scales. */
+    --overlay-gap: clamp(0.75rem, 4vw, 2rem);
+
     position: absolute;
     inset: 0;
 
@@ -345,36 +360,50 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2rem;
+    /* `safe` keeps the top of the content reachable if it ever
+       does overflow; centred overflow is otherwise unscrollable.
+       Plain `center` first as the fallback. */
+    justify-content: safe center;
+    gap: var(--overlay-gap);
+
+    padding: var(--overlay-gap);
+    overflow-y: auto;
 
     background: oklch(0 0 0 / 0.85);
     backdrop-filter: blur(8px);
 
     z-index: 100;
 
+    /* `display` is transitioned discretely so the .hidden utility's
+       display: none only lands once the fade has finished. Without
+       allow-discrete the element vanishes instantly and the opacity
+       transition below never actually runs. */
     transition:
       opacity 0.3s,
-      visibility 0.3s;
+      visibility 0.3s,
+      display 0.3s allow-discrete;
 
     &.hidden {
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
     }
+  }
 
-    & .prompt {
-      font-size: 2.5rem;
-      color: white;
-      margin: 0;
-      text-shadow: 0 0px 20px oklch(0.6 0.16 272 / 0.8);
-    }
+  /* Start screen contents */
+
+  .start-screen .prompt {
+    font-size: clamp(1.75rem, 9vw, 2.5rem);
+    color: white;
+    margin: 0;
+    text-shadow: 0 0px 20px oklch(0.6 0.16 272 / 0.8);
   }
 
   .start-button,
   .menu-button {
     color: oklch(1 0 0);
-    padding: 1rem 3rem;
-    font-size: 1.25rem;
+    padding: clamp(0.7rem, 3vw, 1rem) clamp(1.25rem, 8vw, 3rem);
+    font-size: clamp(1rem, 4vw, 1.25rem);
     border: none;
     border-radius: 8px;
     text-align: center;
@@ -399,10 +428,12 @@
     }
   }
 
+  /* The tallest thing in the start overlay - eight lines of text -
+     so it carries most of the burden of fitting on a short board. */
   .controls-hint {
     color: oklch(1 0 0 / 0.75);
     text-align: center;
-    font-size: 0.9rem;
+    font-size: clamp(0.7rem, 3.2vw, 0.9rem);
     line-height: 1.6;
 
     & p {
@@ -412,41 +443,15 @@
 
       &.inputs {
         color: oklch(1 0 0);
-        margin-bottom: 0.75rem;
+        margin-bottom: clamp(0.3rem, 2vw, 0.75rem);
       }
     }
   }
 
-  /* Game over screen overlay */
-
-  .game-over-screen {
-    position: absolute;
-    inset: 0;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-
-    background: oklch(0 0 0 / 0.85);
-    backdrop-filter: blur(8px);
-
-    z-index: 100;
-
-    transition:
-      opacity 0.3s,
-      visibility 0.3s;
-
-    &.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-  }
+  /* Game over screen contents */
 
   .game-over-title {
-    font-size: 2.5rem;
+    font-size: clamp(1.5rem, 8vw, 2.5rem);
     color: white;
     text-shadow: 0 0px 20px oklch(0.6 0.16 272 / 0.8);
   }
@@ -459,18 +464,19 @@
   }
 
   .game-over-score-value {
-    font-size: 3rem;
+    font-size: clamp(2rem, 10vw, 3rem);
     color: oklch(0.85 0.16 272);
     text-shadow: 0 0 20px oklch(0.6 0.16 272 / 0.6);
   }
 
+  /* No horizontal padding of its own - the overlay's padding
+     already insets it, and doubling up squeezes the buttons. */
   .game-over-buttons {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.75rem;
     width: 100%;
-    padding: 0 2rem;
   }
 
   .menu-button {
@@ -628,8 +634,13 @@
    * -------------------------------------------------- */
   @media (width < 34rem) {
     :root {
-      /* Now also covering the HUD row above the board */
-      --page-chrome-height: 14rem;
+      /* Now also covering the HUD row above the board. Lower than
+         it would otherwise need to be, because the clamped header
+         can no longer wrap to a second line.
+
+         Tuning rule: too large just means a smaller board, too
+         small means the page scrolls vertically. Err large. */
+      --page-chrome-height: 12.5rem;
     }
 
     .game-container {
