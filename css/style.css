@@ -143,17 +143,16 @@
 
     /* ----------------------------------------------
      * Vertical space reserved for everything that is
-     * NOT the board - the header, the footer, and the
-     * gaps between them. The board is capped to
-     * whatever height is left over.
+     * NOT the board. The board is capped to whatever
+     * height is left over.
      *
-     * This is the single tuning point for board size.
-     * Deliberately generous for now: stage 3's fluid
-     * type will let it tighten, and the portrait
-     * layout in stage 2 will need to raise it to make
-     * room for the relocated HUD.
+     * Now that the title sits inside the start overlay
+     * and the footer is gone, nothing shares the page
+     * with the board - this is just breathing room at
+     * the top and bottom. The portrait layout raises it
+     * again to pay for the HUD row.
      * ---------------------------------------------- */
-    --page-chrome-height: 9rem;
+    --page-chrome-height: 2rem;
 
     /* Height of the on-screen control bar. Zero unless the
        responsive layer turns the controls on, so the board
@@ -221,28 +220,17 @@
  * COMPONENTS
  * ================================================== */
 @layer components {
-  /* Page header / footer */
-
-  /* Clamped so it cannot wrap to two lines on a narrow screen -
-     a wrapped header would eat into the board's height budget. */
+  /* Title
+   *
+   * Lives inside the start overlay rather than on the page, so it
+   * has to fit the board's width rather than the viewport's - hence
+   * a smaller ceiling than a page heading would take. `balance`
+   * keeps it tidy if it does wrap on a very narrow board. */
   .text-header {
-    font-size: clamp(1.5rem, 7vw, 2rem);
+    font-size: clamp(1.1rem, 6vw, 1.75rem);
+    text-wrap: balance;
     color: oklch(0.65 0.2 300);
     text-shadow: 0 0px 20px oklch(0 0 0 / 0.2);
-  }
-
-  .text-footer {
-    color: oklch(0.65 0.2 300);
-    text-shadow: 0 0px 8px oklch(0 0 0 / 0.2);
-
-    & a {
-      color: oklch(0.75 0.2 300);
-      text-decoration: none;
-
-      &:hover {
-        color: oklch(0.85 0.2 300);
-      }
-    }
   }
 
   /* Debug HUD */
@@ -726,13 +714,12 @@
    * -------------------------------------------------- */
   @media (width < 34rem) {
     :root {
-      /* Now also covering the HUD row above the board. Lower than
-         it would otherwise need to be, because the clamped header
-         can no longer wrap to a second line.
+      /* Covers the HUD row above the board plus its row gap.
+         Nothing else shares the page any more.
 
          Tuning rule: too large just means a smaller board, too
          small means the page scrolls vertically. Err large. */
-      --page-chrome-height: 12.5rem;
+      --page-chrome-height: 6rem;
     }
 
     .game-container {
@@ -810,9 +797,8 @@
    * Touch devices, landscape
    *
    * Height is the scarce resource here, so the controls move
-   * beside the board instead of below it, and the decorative
-   * header and footer step aside. Same 3x2 block of buttons in
-   * the same DOM order - only its position changes.
+   * beside the board instead of below it. Same 3x2 block of
+   * buttons in the same DOM order - only its position changes.
    *
    * Must come after the block above: it overrides both budget
    * tokens now that nothing is stacked under the board.
@@ -823,9 +809,13 @@
       --touch-controls-height: 0rem;
     }
 
-    .text-header,
-    .text-footer {
-      display: none;
+    /* The overlay gap scales off viewport *width*, which is
+       generous here and exactly the wrong axis - a landscape board
+       is short, and five gaps at the maximum push the start screen
+       into scrolling. */
+    .start-screen,
+    .game-over-screen {
+      --overlay-gap: 0.75rem;
     }
 
     .game-container {

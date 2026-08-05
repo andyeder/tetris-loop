@@ -24,8 +24,6 @@
     <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
-    <h1 class="changa-one-regular text-header">TETRIS, BASICALLY</h1>
-
     <main class="game-container">
       <!-- The board and anything that must sit exactly on top of it.
            Overlays below are positioned against this wrapper, so they
@@ -35,6 +33,8 @@
 
         <!-- Start screen overlay -->
         <div class="start-screen" id="startScreen">
+          <h1 class="changa-one-regular text-header">TETRIS, BASICALLY</h1>
+
           <div class="changa-one-regular prompt">READY?</div>
 
           <!-- Start button -->
@@ -181,13 +181,6 @@
         </button>
       </div>
     </main>
-
-    <div class="poppins-regular text-footer">
-      Source code on
-      <a href="https://github.com/andyeder/tetris-loop" target="_blank"
-        >GitHub</a
-      >
-    </div>
 
     <!-- DEBUG HUD -->
     <aside class="dev-hud poppins-regular hidden" id="devHud">
