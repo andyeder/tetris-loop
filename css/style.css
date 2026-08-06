@@ -612,6 +612,15 @@
     justify-content: center;
 
     min-block-size: 2.75rem;
+
+    /* Both pills sit at this width so they read as a matched pair
+       rather than being sized by their labels - "Sound FX" is
+       otherwise noticeably wider than "Music". Comfortably clears
+       the longer label at the largest clamped font size, and still
+       leaves the two of them fitting side by side on a 320px
+       board; they wrap to equal-width rows below that. */
+    min-inline-size: 7rem;
+
     padding: 0.5rem 1.25rem;
     font-size: clamp(0.8rem, 3.5vw, 0.9rem);
     line-height: 1;
