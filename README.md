@@ -33,15 +33,12 @@ You can play it online [here](https://andyeder.uk/tetris-loop).
 - Uses DAS + ARR movement (https://tetris.wiki/DAS)
 - Tetromino rotation with "wall kick" tables using SRS (https://tetris.wiki/Super_Rotation_System)
 - Simple game HUD
-- Debug HUD (I will leave this in)
+- Debug HUD (I will leave this in, but only available on larger screen sizes)
 - Spawns using a buffer zone atop the board (viewable in debug mode)
 - "Next piece" preview and "Game Over" detection
 - Sounds effects / music (which can be toggled on/off independently)
-
-## Todo List
-
-- Nice to have - user-defined controls
-- Nice to have - mobile friendly :)
+- Added support and on-screen controls for touch devices
+- Preliminary support for mobile/tablet displays (work-in-progress)
 
 ## Developer Notes
 
