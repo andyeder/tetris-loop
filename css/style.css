@@ -138,6 +138,13 @@
  * ================================================== */
 @layer base {
   :root {
+    /* The accent fill shared by the buttons and the audio toggles */
+    --accent-fill: linear-gradient(
+      135deg,
+      oklch(0.6 0.16 272) 0%,
+      oklch(0.5 0.14 300) 100%
+    );
+
     /* Spacing between the board and the surrounding chrome */
     --chrome-gap: 1.5rem;
 
@@ -415,11 +422,7 @@
     text-align: center;
     cursor: pointer;
 
-    background: linear-gradient(
-      135deg,
-      oklch(0.6 0.16 272) 0%,
-      oklch(0.5 0.14 300) 100%
-    );
+    background: var(--accent-fill);
     box-shadow: var(--button-glow);
     transition:
       transform 0.2s,
@@ -574,20 +577,72 @@
 
   /* Audio settings */
 
+  /* --------------------------------------------------
+   * Audio settings
+   *
+   * Pill toggles rather than checkboxes, so they read as part of
+   * the same control set as the buttons and give a target big
+   * enough for a thumb. The old label was only as tall as its
+   * 20px checkbox - under the 24px WCAG minimum, and less than
+   * half what iOS and Android ask for.
+   *
+   * The real <input type="checkbox"> is still there, visually
+   * hidden but focusable: main.js reads .checked and listens for
+   * change, and keeping it preserves the keyboard and screen
+   * reader behaviour a checkbox already has for free.
+   * -------------------------------------------------- */
+
   .audio-settings {
     display: flex;
     flex-direction: row;
-    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
   }
 
   .audio-toggle {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    color: oklch(1 0 0);
+    justify-content: center;
+
+    min-block-size: 2.75rem;
+    padding: 0.5rem 1.25rem;
+    font-size: clamp(0.8rem, 3.5vw, 0.9rem);
+    line-height: 1;
+
+    border-radius: 999px;
     cursor: pointer;
     user-select: none;
-    font-size: 0.9rem;
+
+    /* Off - outlined and muted */
+    color: oklch(1 0 0 / 0.55);
+    background: oklch(1 0 0 / 0.05);
+    border: 1px solid oklch(1 0 0 / 0.18);
+
+    transition:
+      color 0.2s,
+      background 0.2s,
+      border-color 0.2s,
+      box-shadow 0.2s;
+
+    /* On - picks up the same accent fill as the buttons */
+    &:has(input:checked) {
+      color: oklch(1 0 0);
+      background: var(--accent-fill);
+      border-color: transparent;
+      box-shadow: 0 2px 6px oklch(0.6 0.16 272 / 0.2);
+    }
+
+    &:hover {
+      border-color: oklch(1 0 0 / 0.35);
+    }
+
+    /* The input is visually hidden, so the focus ring has to be
+       drawn on the label or keyboard users lose it entirely. */
+    &:has(input:focus-visible) {
+      outline: 2px solid oklch(0.75 0.16 272);
+      outline-offset: 2px;
+    }
 
     & span {
       line-height: 1;
@@ -595,38 +650,18 @@
       align-items: center;
     }
 
-    &:hover {
-      opacity: 0.8;
-    }
-
+    /* Hidden from view but not from the accessibility tree, and
+       still focusable - display: none would lose both. */
     & input[type='checkbox'] {
-      appearance: none; /* Remove default styling */
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-      margin: 0;
-      flex-shrink: 0;
-      border-radius: 4px;
-      border: 2px solid oklch(0.6 0.16 272);
-      background-color: transparent;
-      position: relative;
-      transition: all 0.2s;
-
-      &:checked {
-        background-color: oklch(0.6 0.16 272);
-
-        &::after {
-          content: '';
-          position: absolute;
-          left: 5px;
-          top: 2px;
-          width: 5px;
-          height: 10px;
-          border: solid white;
-          border-width: 0 2px 2px 0;
-          transform: rotate(45deg);
-        }
-      }
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      margin: -1px;
+      padding: 0;
+      border: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
     }
   }
 }
@@ -806,6 +841,17 @@
     /* No pull-to-refresh or bounce while playing */
     body {
       overscroll-behavior: none;
+    }
+
+    /* Sticky hover: on touch a :hover lingers after the tap, so an
+       "off" pill would keep the brighter border until you tapped
+       something else. */
+    .audio-toggle:hover {
+      border-color: oklch(1 0 0 / 0.18);
+    }
+
+    .audio-toggle:hover:has(input:checked) {
+      border-color: transparent;
     }
   }
 
