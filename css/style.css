@@ -171,6 +171,21 @@
        keeps desktop exactly as it was; large touch screens raise
        it so the board uses the space rather than floating in it. */
     --board-max-height: 640px;
+
+    /* The board's resolved display height. Shared so the preview
+       can scale with the board instead of being pinned while the
+       board grows around it. */
+    --board-display-height: min(
+      calc(100svh - var(--page-chrome-height) - var(--touch-controls-height)),
+      var(--board-max-height)
+    );
+
+    /* Preview size as a fraction of that. Purely a visual
+       proportion, not a derived constant - js/renderer.js matches
+       the backing store to whatever this resolves to, so the
+       preview stays sharp at any value. 0.125 reproduces the
+       original 80px preview against a 640px board. */
+    --preview-scale: 0.125;
   }
 
   body {
@@ -766,10 +781,17 @@
        frame before it first runs. */
     aspect-ratio: var(--board-aspect, 10 / 20);
     inline-size: auto;
-    block-size: min(
-      calc(100svh - var(--page-chrome-height) - var(--touch-controls-height)),
-      var(--board-max-height)
-    );
+    block-size: var(--board-display-height);
+  }
+
+  /* Same arrangement as the board: sized here, resolution matched
+     in js/renderer.js. Sized on the inline axis with the block axis
+     auto, so the portrait cap below can clamp it without the fixed
+     ratio distorting the cells. */
+  #previewCanvas {
+    aspect-ratio: 1;
+    inline-size: calc(var(--board-display-height) * var(--preview-scale));
+    block-size: auto;
   }
 
   /* --------------------------------------------------
@@ -816,10 +838,15 @@
       gap: 0.25rem;
     }
 
-    /* Shrink the preview so the top row stays compact.
-       Backing store is untouched - this only scales display. */
+    /* Cap the preview so the top row stays compact - the HUD row is
+       what --page-chrome-height above is paying for, and a preview
+       scaled off a tall board would push it over.
+
+       Clamped on the inline axis, matching how it is sized: the
+       block axis is auto, so the height follows and the cells stay
+       square. */
     #previewCanvas {
-      max-block-size: 3rem;
+      max-inline-size: 3rem;
     }
 
     /* Debug mode is unavailable at this width - js/debug.js gates

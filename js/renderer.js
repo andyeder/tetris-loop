@@ -30,39 +30,67 @@ const previewCtx = previewCanvas.getContext('2d');
 // --------------------------------------------------
 const DPR = Math.min(window.devicePixelRatio || 1, 2);
 
+// Preview canvas units (4x4 cells plus padding)
+const PREVIEW_CELL_SIZE = CELLSIZE / 2;
+const PREVIEW_CANVAS_PADDING = CELLSIZE / 2;
+const PREVIEW_SIZE = 4 * PREVIEW_CELL_SIZE + PREVIEW_CANVAS_PADDING;
+
 // --------------------------------------------------
 // Display size
 //
-// The stylesheet owns how big the board is drawn; this module only
-// matches the backing store to whatever that works out to, so the
-// board stays sharp at any size - phone, desktop or tablet.
+// The stylesheet owns how big each canvas is drawn; this module only
+// matches the backing store to whatever that works out to, so both
+// stay sharp at any size - phone, desktop or tablet.
 //
-// Observed rather than read from clientWidth each frame, which
-// would force a synchronous layout inside the render loop.
+// Observed rather than read from clientWidth each frame, which would
+// force a synchronous layout inside the render loop.
 //
 // Only the width is tracked - the height is derived from it, so the
 // backing store's ratio matches the drawing exactly rather than
 // being a rounded pixel off and quietly distorting the cells.
 // --------------------------------------------------
 let displayWidth = 0;
+let previewDisplayWidth = 0;
 
-new ResizeObserver((entries) => {
-  for (const entry of entries) {
-    const box = entry.contentBoxSize?.[0];
+function observeWidth(element, onWidth) {
+  new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      const box = entry.contentBoxSize?.[0];
 
-    displayWidth = box ? box.inlineSize : entry.contentRect.width;
+      onWidth(box ? box.inlineSize : entry.contentRect.width);
+    }
+  }).observe(element);
+}
+
+observeWidth(canvas, (width) => {
+  displayWidth = width;
+});
+
+observeWidth(previewCanvas, (width) => {
+  previewDisplayWidth = width;
+});
+
+// Resize a canvas's backing store to match its displayed size, and
+// scale its context so drawing carries on in the canvas's own units
+// - board cells for one, preview cells for the other.
+function syncBackingStore(element, context, cssWidth, unitWidth, unitHeight) {
+  const backingWidth = Math.round(cssWidth * DPR);
+  const backingHeight = Math.round(backingWidth * (unitHeight / unitWidth));
+
+  // Assigning width/height wipes the canvas and resets the context,
+  // transform included - so only do it when the size has actually
+  // changed, rather than on every single frame.
+  if (element.width === backingWidth && element.height === backingHeight) {
+    return;
   }
-}).observe(canvas);
 
-// Setup preview canvas size (4x4 cells)
-const PREVIEW_CELL_SIZE = CELLSIZE / 2;
-const PREVIEW_CANVAS_PADDING = CELLSIZE / 2;
-const PREVIEW_SIZE = 4 * PREVIEW_CELL_SIZE + PREVIEW_CANVAS_PADDING;
+  element.width = backingWidth;
+  element.height = backingHeight;
 
-previewCanvas.width = Math.round(PREVIEW_SIZE * DPR);
-previewCanvas.height = Math.round(PREVIEW_SIZE * DPR);
-previewCanvas.style.height = `${PREVIEW_SIZE}px`;
-previewCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  const scale = backingWidth / unitWidth;
+
+  context.setTransform(scale, 0, 0, scale, 0, 0);
+}
 
 let lastRows = 0;
 
@@ -78,28 +106,25 @@ function updateCanvasSize() {
     canvas.style.setProperty('--board-aspect', `${COLS} / ${rows}`);
   }
 
-  // Fall back to the nominal board size until the observer has
-  // reported, so the first frame is not drawn into a 0x0 canvas.
-  const cssWidth = displayWidth || COLS * CELLSIZE;
+  // Fall back to the nominal size until the observer has reported,
+  // so the first frame is not drawn into a 0x0 canvas.
+  syncBackingStore(
+    canvas,
+    ctx,
+    displayWidth || COLS * CELLSIZE,
+    COLS * CELLSIZE,
+    rows * CELLSIZE,
+  );
+}
 
-  const backingWidth = Math.round(cssWidth * DPR);
-  const backingHeight = Math.round(backingWidth * (rows / COLS));
-
-  // Assigning width/height wipes the canvas and resets the context,
-  // transform included - so only do it when the size has actually
-  // changed, rather than on every single frame.
-  if (canvas.width === backingWidth && canvas.height === backingHeight) {
-    return;
-  }
-
-  canvas.width = backingWidth;
-  canvas.height = backingHeight;
-
-  // Everything below still draws in board units - one cell is
-  // CELLSIZE, however many device pixels that turns out to be.
-  const scale = backingWidth / (COLS * CELLSIZE);
-
-  ctx.setTransform(scale, 0, 0, scale, 0, 0);
+function updatePreviewCanvasSize() {
+  syncBackingStore(
+    previewCanvas,
+    previewCtx,
+    previewDisplayWidth || PREVIEW_SIZE,
+    PREVIEW_SIZE,
+    PREVIEW_SIZE,
+  );
 }
 
 // Initial canvas setup
@@ -119,6 +144,8 @@ function drawCellAt(context, x, y, size, colour) {
 }
 
 function drawNextPiecePreview() {
+  updatePreviewCanvasSize();
+
   const next = peekNextTetromino();
 
   if (!next) {
