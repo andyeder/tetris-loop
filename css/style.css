@@ -165,6 +165,12 @@
        responsive layer turns the controls on, so the board
        budget below composes from two independent knobs. */
     --touch-controls-height: 0rem;
+
+    /* How large the board is ever allowed to get, regardless of
+       how much room there is. 640px is its nominal size, which
+       keeps desktop exactly as it was; large touch screens raise
+       it so the board uses the space rather than floating in it. */
+    --board-max-height: 640px;
   }
 
   body {
@@ -740,8 +746,20 @@
    * #canvas, not canvas - #previewCanvas must not scale.
    * -------------------------------------------------- */
   #canvas {
-    max-block-size: calc(
-      100svh - var(--page-chrome-height) - var(--touch-controls-height)
+    /* The stylesheet owns the display size and js/renderer.js
+       matches the backing store to it, so the board is sharp at
+       whatever size it lands on.
+
+       The ratio has to be stated rather than inherited from the
+       canvas attributes, or the two would be circular - the size
+       we resolve here is what those attributes get derived from.
+       js/renderer.js sets --board-aspect; the fallback covers the
+       frame before it first runs. */
+    aspect-ratio: var(--board-aspect, 10 / 20);
+    inline-size: auto;
+    block-size: min(
+      calc(100svh - var(--page-chrome-height) - var(--touch-controls-height)),
+      var(--board-max-height)
     );
   }
 
@@ -852,6 +870,23 @@
 
     .audio-toggle:hover:has(input:checked) {
       border-color: transparent;
+    }
+  }
+
+  /* --------------------------------------------------
+   * Large touch screens (tablets)
+   *
+   * The board is no longer pinned to its 320x640 nominal size, so
+   * here it can use the room instead of floating in the middle of
+   * it. Keyed on coarse pointer as well as width so desktop is
+   * deliberately left exactly as it was.
+   *
+   * The budget calc still applies - this only raises the ceiling,
+   * so a short-but-wide tablet still shrinks to fit.
+   * -------------------------------------------------- */
+  @media (pointer: coarse) and (width >= 48rem) {
+    :root {
+      --board-max-height: 960px;
     }
   }
 

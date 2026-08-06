@@ -27,13 +27,32 @@ const previewCtx = previewCanvas.getContext('2d');
 //
 // Capped at 2 - beyond that the extra pixels cost fill rate
 // without being visible.
-//
-// Only the *height* is pinned in CSS, never the width. The board
-// scales by having its height capped while its width stays auto
-// (see the responsive layer), and setting an explicit width would
-// break that and squash the aspect ratio.
 // --------------------------------------------------
 const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+// --------------------------------------------------
+// Display size
+//
+// The stylesheet owns how big the board is drawn; this module only
+// matches the backing store to whatever that works out to, so the
+// board stays sharp at any size - phone, desktop or tablet.
+//
+// Observed rather than read from clientWidth each frame, which
+// would force a synchronous layout inside the render loop.
+//
+// Only the width is tracked - the height is derived from it, so the
+// backing store's ratio matches the drawing exactly rather than
+// being a rounded pixel off and quietly distorting the cells.
+// --------------------------------------------------
+let displayWidth = 0;
+
+new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    const box = entry.contentBoxSize?.[0];
+
+    displayWidth = box ? box.inlineSize : entry.contentRect.width;
+  }
+}).observe(canvas);
 
 // Setup preview canvas size (4x4 cells)
 const PREVIEW_CELL_SIZE = CELLSIZE / 2;
@@ -45,13 +64,26 @@ previewCanvas.height = Math.round(PREVIEW_SIZE * DPR);
 previewCanvas.style.height = `${PREVIEW_SIZE}px`;
 previewCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
+let lastRows = 0;
+
 // Setup canvas dimensions based on debug mode
 function updateCanvasSize() {
-  const width = COLS * CELLSIZE;
-  const height = (isDebugMode() ? TOTAL_ROWS : ROWS) * CELLSIZE;
+  const rows = isDebugMode() ? TOTAL_ROWS : ROWS;
 
-  const backingWidth = Math.round(width * DPR);
-  const backingHeight = Math.round(height * DPR);
+  // Hand CSS the board's shape. Stating the ratio explicitly is what
+  // keeps this from being circular: the displayed size must not
+  // depend on the backing store we are about to derive from it.
+  if (rows !== lastRows) {
+    lastRows = rows;
+    canvas.style.setProperty('--board-aspect', `${COLS} / ${rows}`);
+  }
+
+  // Fall back to the nominal board size until the observer has
+  // reported, so the first frame is not drawn into a 0x0 canvas.
+  const cssWidth = displayWidth || COLS * CELLSIZE;
+
+  const backingWidth = Math.round(cssWidth * DPR);
+  const backingHeight = Math.round(backingWidth * (rows / COLS));
 
   // Assigning width/height wipes the canvas and resets the context,
   // transform included - so only do it when the size has actually
@@ -63,11 +95,11 @@ function updateCanvasSize() {
   canvas.width = backingWidth;
   canvas.height = backingHeight;
 
-  // Pin the logical height; width stays auto so CSS can scale the
-  // board without distorting it.
-  canvas.style.height = `${height}px`;
+  // Everything below still draws in board units - one cell is
+  // CELLSIZE, however many device pixels that turns out to be.
+  const scale = backingWidth / (COLS * CELLSIZE);
 
-  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.setTransform(scale, 0, 0, scale, 0, 0);
 }
 
 // Initial canvas setup
