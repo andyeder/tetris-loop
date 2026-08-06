@@ -138,53 +138,38 @@
  * ================================================== */
 @layer base {
   :root {
-    /* The accent fill shared by the buttons and the audio toggles */
     --accent-fill: linear-gradient(
       135deg,
       oklch(0.6 0.16 272) 0%,
       oklch(0.5 0.14 300) 100%
     );
 
-    /* Spacing between the board and the surrounding chrome */
     --chrome-gap: 1.5rem;
 
-    /* ----------------------------------------------
-     * Vertical space reserved for everything that is
-     * NOT the board. The board is capped to whatever
-     * height is left over.
-     *
-     * Now that the title sits inside the start overlay
-     * and the footer is gone, nothing shares the page
-     * with the board - this is just breathing room at
-     * the top and bottom. The portrait layout raises it
-     * again to pay for the HUD row.
-     * ---------------------------------------------- */
+    /* Vertical space reserved for everything that is not the board.
+       Just breathing room here; the portrait layout raises it to pay
+       for the HUD row above the board. */
     --page-chrome-height: 2rem;
 
-    /* Height of the on-screen control bar. Zero unless the
-       responsive layer turns the controls on, so the board
-       budget below composes from two independent knobs. */
+    /* Zero unless the responsive layer turns the controls on, so the
+       board budget composes from two independent knobs. */
     --touch-controls-height: 0rem;
 
-    /* How large the board is ever allowed to get, regardless of
-       how much room there is. 640px is its nominal size, which
-       keeps desktop exactly as it was; large touch screens raise
-       it so the board uses the space rather than floating in it. */
+    /* 640px is the board's nominal size, which keeps desktop exactly
+       as it was; large touch screens raise it. */
     --board-max-height: 640px;
 
-    /* The board's resolved display height. Shared so the preview
-       can scale with the board instead of being pinned while the
-       board grows around it. */
+    /* Shared so the preview can scale with the board rather than
+       being pinned while the board grows around it. */
     --board-display-height: min(
       calc(100svh - var(--page-chrome-height) - var(--touch-controls-height)),
       var(--board-max-height)
     );
 
-    /* Preview size as a fraction of that. Purely a visual
-       proportion, not a derived constant - js/renderer.js matches
-       the backing store to whatever this resolves to, so the
-       preview stays sharp at any value. 0.125 reproduces the
-       original 80px preview against a 640px board. */
+    /* Purely a visual proportion, not a derived constant -
+       js/renderer.js matches the backing store to whatever this
+       resolves to, so the preview stays sharp at any value. 0.125
+       reproduces the original 80px preview against a 640px board. */
     --preview-scale: 0.125;
   }
 
@@ -199,8 +184,8 @@
     justify-content: center;
     align-items: center;
 
-    /* svh (not vh) so mobile browser chrome doesn't
-       push the page taller than the visible viewport */
+    /* svh, not vh, so mobile browser chrome doesn't push the page
+       taller than the visible viewport */
     min-height: 100svh;
   }
 
@@ -214,15 +199,9 @@
  * LAYOUT
  * ================================================== */
 @layer layout {
-  /* --------------------------------------------------
-   * Board + side rail.
-   *
-   * The board spans both rows; the rail splits into a
-   * 1fr row (score HUD, pinned to the top) and an auto
-   * row (next-piece preview, which therefore sits at the
-   * bottom). That reproduces the previous absolutely
-   * positioned rail, but as real layout that can reflow.
-   * -------------------------------------------------- */
+  /* The board spans both rows; the rail splits into a 1fr row (score
+     HUD, pinned to the top) and an auto row (preview, which
+     therefore sits at the bottom). */
   .game-container {
     display: grid;
     grid-template-areas:
@@ -234,9 +213,9 @@
     column-gap: var(--chrome-gap);
   }
 
-  /* Containing block for the start / game-over overlays.
-     Sized by the canvas alone, so `inset: 0` overlays always
-     cover the board exactly - never the surrounding chrome. */
+  /* Containing block for the overlays. Sized by the canvas alone, so
+     `inset: 0` overlays always cover the board exactly - never the
+     surrounding chrome. */
   .board-stage {
     grid-area: board;
     position: relative;
@@ -248,12 +227,9 @@
  * COMPONENTS
  * ================================================== */
 @layer components {
-  /* Title
-   *
-   * Lives inside the start overlay rather than on the page, so it
-   * has to fit the board's width rather than the viewport's - hence
-   * a smaller ceiling than a page heading would take. `balance`
-   * keeps it tidy if it does wrap on a very narrow board. */
+  /* Sits inside the start overlay rather than on the page, so it has
+     to fit the board's width rather than the viewport's - hence a
+     smaller ceiling than a page heading would take. */
   .text-header {
     font-size: clamp(1.1rem, 6vw, 1.75rem);
     text-wrap: balance;
@@ -304,7 +280,7 @@
     gap: 0.25rem;
   }
 
-  /* Game score, etc. HUD */
+  /* Score HUD */
 
   .score-hud {
     grid-area: hud;
@@ -335,7 +311,7 @@
     color: oklch(1 0 0);
   }
 
-  /* Preview canvas - purely for the "Next Piece" preview */
+  /* Next piece preview */
 
   .preview-container {
     grid-area: next;
@@ -344,10 +320,6 @@
     flex-direction: column;
     gap: 0.5rem;
 
-    /* Not the default `stretch`: this is a column flex container, so
-       stretch would pull the canvas out to the rail's full width
-       (>=120px, set by .score-hud) while js/renderer.js pins its
-       height - squashing it. */
     align-items: flex-start;
   }
 
@@ -369,16 +341,13 @@
   /* --------------------------------------------------
    * Board overlays (start screen, game over)
    *
-   * Both cover the board exactly and dismiss the same
-   * way, so everything shared lives here and only the
-   * contents differ further down.
+   * Both cover the board exactly and dismiss the same way, so
+   * everything shared lives here and only the contents differ
+   * further down.
    * -------------------------------------------------- */
 
   .start-screen,
   .game-over-screen {
-    /* Drives both the gap between rows and the inset from
-       the board edge, so the overlay breathes evenly as it
-       scales. */
     --overlay-gap: clamp(0.75rem, 4vw, 2rem);
 
     position: absolute;
@@ -387,10 +356,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* `safe` keeps the top of the content reachable if it ever does
+       overflow; centred overflow is otherwise unscrollable. Plain
+       `center` first as the fallback. */
     justify-content: center;
-    /* `safe` keeps the top of the content reachable if it ever
-       does overflow; centred overflow is otherwise unscrollable.
-       Plain `center` first as the fallback. */
     justify-content: safe center;
     gap: var(--overlay-gap);
 
@@ -405,7 +374,7 @@
     /* `display` is transitioned discretely so the .hidden utility's
        display: none only lands once the fade has finished. Without
        allow-discrete the element vanishes instantly and the opacity
-       transition below never actually runs. */
+       transition never actually runs. */
     transition:
       opacity 0.3s,
       visibility 0.3s,
@@ -422,8 +391,8 @@
    * Buttons
    *
    * One appearance shared by the start button, the game-over
-   * buttons and the on-screen touch controls. Only sizing and
-   * press behaviour differ per use - see .touch-button below.
+   * buttons and the on-screen touch controls. Only sizing and press
+   * behaviour differ per use - see .touch-button below.
    * -------------------------------------------------- */
 
   .start-button,
@@ -467,8 +436,6 @@
     text-shadow: 0 0px 20px oklch(0.6 0.16 272 / 0.8);
   }
 
-  /* The tallest thing in the start overlay - eight lines of text -
-     so it carries most of the burden of fitting on a short board. */
   .controls-hint {
     color: oklch(1 0 0 / 0.75);
     text-align: center;
@@ -487,8 +454,8 @@
     }
   }
 
-  /* Only one hint variant is ever shown - the responsive layer
-     swaps them over for coarse pointers. */
+  /* Only one hint variant is ever shown - the responsive layer swaps
+     them over for coarse pointers. */
   .controls-hint--touch {
     display: none;
   }
@@ -513,11 +480,11 @@
     margin-block-start: 0.75rem;
   }
 
-  /* Appearance comes from the shared button rule above - only the
-     things that have to differ are set here. */
+  /* Appearance comes from the shared button rule above - only what
+     has to differ is set here. */
   .touch-button {
-    /* Much softer than the menu buttons. Six of these sit side by
-       side, and at the full glow they bloom into one another. */
+    /* Six of these sit side by side, and at the full glow they bloom
+       into one another. */
     --button-glow: 0 2px 6px oklch(0.6 0.16 272 / 0.2);
     --button-glow-hover: var(--button-glow);
     --button-glow-active: 0 1px 4px oklch(0.6 0.16 272 / 0.3);
@@ -526,8 +493,8 @@
     align-items: center;
     justify-content: center;
 
-    /* Thumb-sized and square-ish. The grid column sets the width, so
-       the menu buttons' generous horizontal padding is dropped. */
+    /* Thumb-sized. The grid column sets the width, so the menu
+       buttons' generous horizontal padding is dropped. */
     min-block-size: clamp(2.75rem, 9vw, 3.5rem);
     padding: 0.25rem;
     font-size: clamp(1.1rem, 5vw, 1.4rem);
@@ -537,18 +504,16 @@
     touch-action: none;
 
     /* No hover lift. These only ever appear on coarse pointers,
-       where a lingering :hover is just a leftover from the last tap
-       rather than a real cursor sitting on the button. The glow is
-       already pinned to the resting value by the token above. */
+       where a lingering :hover is a leftover from the last tap
+       rather than a cursor sitting on the button. */
     &:hover {
       transform: none;
     }
 
     /* Driven from js/touch.js rather than :active, which stops
-       firing reliably once the pointer has been captured. Mirrors
-       the shared :active look, plus a lift in brightness - which
-       now carries most of the press feedback, since the shadow is
-       too soft to read on its own. */
+       firing reliably once the pointer has been captured. The
+       brightness carries most of the feedback, since the softened
+       shadow is too subtle to read on its own. */
     &.is-pressed {
       transform: translateY(1px);
       box-shadow: var(--button-glow-active);
@@ -577,8 +542,8 @@
     text-shadow: 0 0 20px oklch(0.6 0.16 272 / 0.6);
   }
 
-  /* No horizontal padding of its own - the overlay's padding
-     already insets it, and doubling up squeezes the buttons. */
+  /* No horizontal padding of its own - the overlay's padding already
+     insets it, and doubling up squeezes the buttons. */
   .game-over-buttons {
     display: flex;
     flex-direction: column;
@@ -591,26 +556,21 @@
     width: 100%;
   }
 
-  /* Make start button full width inside game-over-buttons too */
   .game-over-buttons .start-button {
     width: 100%;
   }
 
-  /* Audio settings */
-
   /* --------------------------------------------------
    * Audio settings
    *
-   * Pill toggles rather than checkboxes, so they read as part of
-   * the same control set as the buttons and give a target big
-   * enough for a thumb. The old label was only as tall as its
-   * 20px checkbox - under the 24px WCAG minimum, and less than
-   * half what iOS and Android ask for.
+   * Pill toggles rather than checkboxes, for a target big enough
+   * for a thumb - the old label was only as tall as its 20px
+   * checkbox, under the 24px WCAG minimum.
    *
    * The real <input type="checkbox"> is still there, visually
    * hidden but focusable: main.js reads .checked and listens for
-   * change, and keeping it preserves the keyboard and screen
-   * reader behaviour a checkbox already has for free.
+   * change, and keeping it preserves the keyboard and screen reader
+   * behaviour a checkbox already has for free.
    * -------------------------------------------------- */
 
   .audio-settings {
@@ -629,11 +589,9 @@
     min-block-size: 2.75rem;
 
     /* Both pills sit at this width so they read as a matched pair
-       rather than being sized by their labels - "Sound FX" is
-       otherwise noticeably wider than "Music". Comfortably clears
-       the longer label at the largest clamped font size, and still
-       leaves the two of them fitting side by side on a 320px
-       board; they wrap to equal-width rows below that. */
+       rather than being sized by their labels. Clears the longer
+       label at the largest clamped font size, and still leaves the
+       two of them fitting side by side on a 320px board. */
     min-inline-size: 7rem;
 
     padding: 0.5rem 1.25rem;
@@ -700,8 +658,6 @@
  * UTILITIES
  * ================================================== */
 @layer utilities {
-  /* Font helpers */
-
   .poppins-light {
     font-family: 'Poppins', sans-serif;
     font-weight: 300;
@@ -738,8 +694,6 @@
     font-style: italic;
   }
 
-  /* Visibility */
-
   .hidden {
     display: none;
   }
@@ -749,45 +703,24 @@
  * RESPONSIVE
  * ================================================== */
 @layer responsive {
-  /* --------------------------------------------------
-   * Fluid board scaling
-   *
-   * The canvas already knows how big the board is: its
-   * width/height attributes are set in js/renderer.js from
-   * the constants in js/constants.js, which gives it both an
-   * intrinsic size and an intrinsic aspect ratio - exactly
-   * like an <img>.
-   *
-   * So CSS never restates those numbers, it only constrains.
-   * Capping the block size shrinks the inline size to match,
-   * because the reset leaves inline-size as auto. On tall
-   * viewports the calc() exceeds the native 640px and nothing
-   * happens - max-block-size can only shrink, never grow.
-   *
-   * The reset's max-inline-size: 100% covers the narrow-viewport
-   * case by the same mechanism. Whichever binds first wins.
-   *
-   * #canvas, not canvas - #previewCanvas must not scale.
-   * -------------------------------------------------- */
-  #canvas {
-    /* The stylesheet owns the display size and js/renderer.js
-       matches the backing store to it, so the board is sharp at
-       whatever size it lands on.
+  /* The stylesheet owns the display size and js/renderer.js matches
+     the backing store to it, so the board is sharp at whatever size
+     it lands on.
 
-       The ratio has to be stated rather than inherited from the
-       canvas attributes, or the two would be circular - the size
-       we resolve here is what those attributes get derived from.
-       js/renderer.js sets --board-aspect; the fallback covers the
-       frame before it first runs. */
+     The ratio has to be stated rather than inherited from the canvas
+     attributes, or the two would be circular - the size resolved
+     here is what those attributes get derived from. js/renderer.js
+     sets --board-aspect; the fallback covers the frame before it
+     first runs. */
+  #canvas {
     aspect-ratio: var(--board-aspect, 10 / 20);
     inline-size: auto;
     block-size: var(--board-display-height);
   }
 
-  /* Same arrangement as the board: sized here, resolution matched
-     in js/renderer.js. Sized on the inline axis with the block axis
-     auto, so the portrait cap below can clamp it without the fixed
-     ratio distorting the cells. */
+  /* Same arrangement as the board. Sized on the inline axis with the
+     block axis auto, so the portrait cap below can clamp it without
+     the fixed ratio distorting the cells. */
   #previewCanvas {
     aspect-ratio: 1;
     inline-size: calc(var(--board-display-height) * var(--preview-scale));
@@ -798,17 +731,15 @@
    * Stacked layout
    *
    * Triggered on available width, not device class. The
-   * side-by-side layout needs roughly board (320px max)
-   * + gap + rail (120px min), so it stops fitting a little
-   * under 34rem. Wide phones and tablets keep the rail.
+   * side-by-side layout needs roughly board (320px max) + gap +
+   * rail (120px min), so it stops fitting a little under 34rem.
+   * Wide phones and tablets keep the rail.
    * -------------------------------------------------- */
   @media (width < 34rem) {
     :root {
-      /* Covers the HUD row above the board plus its row gap.
-         Nothing else shares the page any more.
-
-         Tuning rule: too large just means a smaller board, too
-         small means the page scrolls vertically. Err large. */
+      /* Covers the HUD row above the board plus its row gap. Too
+         large just means a smaller board, too small means the page
+         scrolls vertically - err large. */
       --page-chrome-height: 6rem;
     }
 
@@ -823,8 +754,8 @@
     }
 
     /* Score blocks run across the top instead of down the side.
-       min-width has to go, or three 120px blocks overflow a
-       board that is only ~300px wide. */
+       min-width has to go, or three 120px blocks overflow a board
+       that is only ~300px wide. */
     .score-hud {
       flex-direction: row;
       justify-content: space-between;
@@ -838,22 +769,18 @@
       gap: 0.25rem;
     }
 
-    /* Cap the preview so the top row stays compact - the HUD row is
-       what --page-chrome-height above is paying for, and a preview
-       scaled off a tall board would push it over.
-
-       Clamped on the inline axis, matching how it is sized: the
-       block axis is auto, so the height follows and the cells stay
-       square. */
+    /* Cap the preview so the top row stays within what
+       --page-chrome-height above is paying for. Clamped on the
+       inline axis, matching how it is sized, so the height follows
+       and the cells stay square. */
     #previewCanvas {
       max-inline-size: 3rem;
     }
 
     /* Debug mode is unavailable at this width - js/debug.js gates
-       the toggle on the same breakpoint. These two rules are the
-       belt and braces: the panel can never be stranded over the
-       board, and the start screen never advertises a key that
-       does nothing. */
+       the toggle on the same breakpoint. Belt and braces: the panel
+       can never be stranded over the board, and the start screen
+       never advertises a key that does nothing. */
     .dev-hud,
     .controls-hint-debug {
       display: none;
@@ -863,14 +790,13 @@
   /* --------------------------------------------------
    * Touch devices
    *
-   * Keyed on pointer type rather than width: a phone in
-   * landscape still needs the controls, and a narrow desktop
-   * window still does not.
+   * Keyed on pointer type rather than width: a phone in landscape
+   * still needs the controls, and a narrow desktop window still
+   * does not.
    * -------------------------------------------------- */
   @media (pointer: coarse) {
     :root {
-      /* Two button rows plus the gap above them. Claimed back
-         from the board by the max-block-size rule above. */
+      /* Two button rows plus the gap above them */
       --touch-controls-height: 7rem;
     }
 
@@ -897,9 +823,8 @@
       overscroll-behavior: none;
     }
 
-    /* Sticky hover: on touch a :hover lingers after the tap, so an
-       "off" pill would keep the brighter border until you tapped
-       something else. */
+    /* On touch a :hover lingers after the tap, so an "off" pill
+       would keep the brighter border until you tapped elsewhere. */
     .audio-toggle:hover {
       border-color: oklch(1 0 0 / 0.18);
     }
@@ -909,17 +834,10 @@
     }
   }
 
-  /* --------------------------------------------------
-   * Large touch screens (tablets)
-   *
-   * The board is no longer pinned to its 320x640 nominal size, so
-   * here it can use the room instead of floating in the middle of
-   * it. Keyed on coarse pointer as well as width so desktop is
-   * deliberately left exactly as it was.
-   *
-   * The budget calc still applies - this only raises the ceiling,
-   * so a short-but-wide tablet still shrinks to fit.
-   * -------------------------------------------------- */
+  /* Keyed on coarse pointer as well as width so desktop is
+     deliberately left exactly as it was. Only raises the ceiling -
+     the budget calc still applies, so a short-but-wide tablet still
+     shrinks to fit. */
   @media (pointer: coarse) and (width >= 48rem) {
     :root {
       --board-max-height: 960px;
@@ -929,9 +847,9 @@
   /* --------------------------------------------------
    * Touch devices, landscape
    *
-   * Height is the scarce resource here, so the controls move
-   * beside the board instead of below it. Same 3x2 block of
-   * buttons in the same DOM order - only its position changes.
+   * Height is the scarce resource here, so the controls move beside
+   * the board instead of below it. Same 3x2 block of buttons in the
+   * same DOM order - only its position changes.
    *
    * Must come after the block above: it overrides both budget
    * tokens now that nothing is stacked under the board.
@@ -942,10 +860,10 @@
       --touch-controls-height: 0rem;
     }
 
-    /* The overlay gap scales off viewport *width*, which is
-       generous here and exactly the wrong axis - a landscape board
-       is short, and five gaps at the maximum push the start screen
-       into scrolling. */
+    /* --overlay-gap scales off viewport *width*, which is generous
+       here and exactly the wrong axis - a landscape board is short,
+       and five gaps at the maximum push the start screen into
+       scrolling. */
     .start-screen,
     .game-over-screen {
       --overlay-gap: 0.75rem;
