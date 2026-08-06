@@ -2,7 +2,7 @@
 
 I started out by writing a simple Tetris-like game loop having been inspired by a close friend and colleague, [TGJG (github)](https://github.com/TracyGJG), who was/is working on a functional programming version of the game that runs both text-based and browser/canvas-based. _My interpretation doesn't use FP and is only designed for the browser!_
 
-However, I got a bit carried away and the result is a _pretty much_ complete version of Tetris. I have based it on guidelines for "modern" Tetris (more information provided below). Be forewarned, the game is not mobile-friendly right now... so best to run it in your preferred browser!
+However, I got a bit carried away and the result is a _pretty much_ complete version of Tetris. I have based it on guidelines for "modern" Tetris (more information provided below). Be forewarned, the game is not necessarily mobile- or tablet-friendly right now... it should work following recent updates, but the experience may not be so good!
 
 You can play it online [here](https://tetris-loop.codeconcise.uk).
 
@@ -16,6 +16,8 @@ You can play it online [here](https://tetris-loop.codeconcise.uk).
 | Hard Drop             | Space Bar            |
 | Debug Stats           | ~ (whilst playing)   |
 | Hard Restart :)       | F5                   |
+
+(On-screen buttons are displayed for smaller screens and devices).
 
 ## Tech Stack
 
