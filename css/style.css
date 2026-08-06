@@ -315,6 +315,12 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+
+    /* Not the default `stretch`: this is a column flex container, so
+       stretch would pull the canvas out to the rail's full width
+       (>=120px, set by .score-hud) while js/renderer.js pins its
+       height - squashing it. */
+    align-items: flex-start;
   }
 
   .preview-label {
